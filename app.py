@@ -1,4 +1,5 @@
 from flask import Flask, flash, url_for
+import json
 from flask import redirect, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
@@ -131,14 +132,18 @@ def process_pdf():
             number_of_pages = len(reader.pages)
             page = reader.pages[0]
             text = page.extract_text()
-            return redirect(url_for('upload_success', length=number_of_pages, text='text'))
+            sentences = text.split(". ")
+            json_array = json.dumps(sentences)
+            return json_array
+            return f'Number of pages: {number_of_pages}, text: {text}'
+            #return redirect(url_for('upload_success', length=number_of_pages, text='text'))
             #return redirect("/")
     return redirect("/")
 
 @app.route("/upload_success")
 def upload_success():
-    length = request.args.get('length')
-    text = request.args.get('text')
+    length = request.args('length')
+    text = request.args('text')
     return render_template("upload_success.html", length=request.form["length"])
 
     '''
