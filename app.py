@@ -3,9 +3,11 @@ from flask import redirect, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
 from os import getenv
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+app.secret_key = getenv("SECRET_KEY")
 db = SQLAlchemy(app)
 
 @app.route("/")
@@ -35,7 +37,29 @@ def login_user():
     username = request.form["username"]
     password = request.form["password"]
     # TODO: check username and password
+    sql = "SELECT id, password FROM users WHERE username=:username"
+    result = db.session.execute(sql, {"username":username})
+    user = result.fetchone()    
+    if not user:
+        # TODO: invalid username
+        return redirect("/login")
+    else:
+        hash_value = user.password
+        if check_password_hash(hash_value, password):
+            # TODO: correct username and password
+            return redirect("/login")
+
+        else:
+            return redirect("/login")
+            # TODO: invalid password
+
+        return redirect("/login")
     session["username"] = username
+    return redirect("/")
+
+@app.route("/logout")
+def logout():
+    del session["username"]
     return redirect("/")
 
 @app.route("/result", methods=["POST"])
@@ -54,8 +78,9 @@ def send():
 def create():
     username = request.form["username"]
     password = request.form["password"]
+    hash_value = generate_password_hash(password)
     sql = "INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id"
-    result = db.session.execute(text(sql), {"username":username, "password":password})
+    result = db.session.execute(text(sql), {"username":username, "password":hash_value})
     user_id = result.fetchone()[0]
     db.session.commit()
     return redirect("/")
