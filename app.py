@@ -1,14 +1,24 @@
-from flask import Flask
+from flask import Flask, flash, url_for
 from flask import redirect, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-from os import getenv
+import os 
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from PyPDF2 import PdfReader
+
+UPLOAD_FOLDER = 'uploads'
+ALLOWED_EXTENSIONS = {'pdf'}
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-app.secret_key = getenv("SECRET_KEY")
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")
+app.secret_key = os.getenv("SECRET_KEY")
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 @app.route("/")
 def index():
@@ -35,6 +45,14 @@ def login():
 @app.route("/login/<int:id>")
 def login_with_id(id):
     return render_template("login.html", message_id=id)
+
+@app.route("/pair")
+def pair():
+    if "username" in session:
+    #if session["username"]:
+        return render_template("pair.html", message_id=id)
+    else:
+        return redirect("/")
 
 @app.route("/login_user",methods=["POST"])
 def login_user():
@@ -87,3 +105,50 @@ def create():
     user_id = result.fetchone()[0]
     db.session.commit()
     return redirect("/")
+
+@app.route("/upload")
+def upload():
+    return render_template("upload.html")
+
+@app.route("/process_pdf", methods=['GET', 'POST'])
+def process_pdf():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'pdf-file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['pdf-file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            #would be nice to inform the user that it went through
+            reader = PdfReader("uploads/"+filename)
+            number_of_pages = len(reader.pages)
+            page = reader.pages[0]
+            text = page.extract_text()
+            return redirect(url_for('upload_success', length=number_of_pages, text='text'))
+            #return redirect("/")
+    return redirect("/")
+
+@app.route("/upload_success")
+def upload_success():
+    length = request.args.get('length')
+    text = request.args.get('text')
+    return render_template("upload_success.html", length=request.form["length"])
+
+    '''
+    if 'pdf-file' not in request.files:
+        return redirect("/")  # No file uploaded
+    file=request.files["pdf-file"]
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for('download_file', name=filename))
+    return redirect("/")
+    '''
+
