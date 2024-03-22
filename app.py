@@ -30,7 +30,11 @@ def registration():
 
 @app.route("/login")
 def login():
-    return render_template("login.html")
+    return render_template("login.html", message_id=0)
+
+@app.route("/login/<int:id>")
+def login_with_id(id):
+    return render_template("login.html", message_id=id)
 
 @app.route("/login_user",methods=["POST"])
 def login_user():
@@ -38,21 +42,20 @@ def login_user():
     password = request.form["password"]
     # TODO: check username and password
     sql = "SELECT id, password FROM users WHERE username=:username"
-    result = db.session.execute(sql, {"username":username})
+    result = db.session.execute(text(sql), {"username":username})
     user = result.fetchone()    
     if not user:
-        # TODO: invalid username
-        return redirect("/login")
+        # invalid username
+        return redirect("/login/1")
     else:
         hash_value = user.password
         if check_password_hash(hash_value, password):
-            # TODO: correct username and password
-            return redirect("/login")
-
+            #correct username and password
+            session["username"] = username
+            return redirect("/")
         else:
-            return redirect("/login")
-            # TODO: invalid password
-
+            return redirect("/login/2")
+                #invalid password
         return redirect("/login")
     session["username"] = username
     return redirect("/")

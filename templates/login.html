@@ -1,3 +1,4 @@
+{% if message_id==0 %}
 <form action="/login_user" method="POST">
 Log in using your credentials: <br>
 <textarea name="username" placeholder="Username..." rows="3" cols="40"></textarea>
@@ -5,3 +6,7 @@ Log in using your credentials: <br>
 <br>
 <input type="submit" value="Log in">
 </form>
+{% else %}
+Something went wrong. Either the user doesn't exist or the password is wrong.
+<a href="/login">Go back</a>
+{% endif %}
