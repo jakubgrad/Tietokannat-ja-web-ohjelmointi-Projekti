@@ -1,5 +1,8 @@
 import db
-from app import app
+import json
+from PyPDF2 import PdfReader
+import os
+from app import app, ALLOWED_EXTENSIONS
 from flask import render_template, request, redirect
 import messages, users
 
@@ -87,6 +90,11 @@ def register():
 def upload():
     return render_template("upload.html")
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
 @app.route("/process_pdf", methods=['GET', 'POST'])
 def process_pdf():
     if request.method == 'POST':
@@ -101,10 +109,11 @@ def process_pdf():
             flash('No selected file')
             return redirect(request.url)
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            #filename = secure_filename(file.filename)
+            filename = file.filename
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             #would be nice to inform the user that it went through
-            reader = PdfReader("uploads/"+filename)
+            reader = PdfReader("../uploads/"+filename)
             number_of_pages = len(reader.pages)
             page = reader.pages[0]
             text = page.extract_text()

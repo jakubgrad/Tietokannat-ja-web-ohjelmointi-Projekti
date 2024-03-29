@@ -3,9 +3,8 @@ import json
 import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text
-from PyPDF2 import PdfReader
 
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = '../uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
 
 app = Flask(__name__)
