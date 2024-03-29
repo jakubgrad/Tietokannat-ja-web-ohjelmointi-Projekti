@@ -1,2 +1,0 @@
-bilingual reading, database needs to store ebooks and how far they were read. quite probably some sentence decomposition needs to take place. Users need to be able to log in
-
