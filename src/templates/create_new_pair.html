@@ -1,0 +1,61 @@
+{% if session.username %}
+Use this form to create a new pair of books for billingual reading
+<form action="/create_new_pair" method="POST">
+Create new pair! <br>
+<input name="name" placeholder="Name the pair"></input><br>
+
+<input name="book1_id" placeholder="ID of book 1 from the below list..."></input><br>
+
+<input name="book2_id" placeholder="ID of book 2 from the below list..."></input><br>
+
+<br>
+<input type="submit" value="Create a new pair!">
+</form>
+
+
+<style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+
+    tr.border-bottom td {
+      border-bottom: 2px solid black;
+    }
+</style>
+
+<p>Here are the pdfs you have uploaded :))</p>
+<table>
+
+{% for book in books %}
+  <tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Filename</th>
+    <th>Language</th>
+    <th>Author</th>
+    <th>ISBN</th>
+  </tr>
+  <tr>
+    <td>{{ book.id }}</td>
+    <td>{{ book.title }}</td>
+    <td>{{ book.filename }}</td>
+    <td>{{ book.language }}</td>
+    <td>{{ book.author }}</td>
+    <td>{{ book.isbn }}</td>
+  </tr>
+{% endfor %}
+</table>
+
+{% else %}
+It appears you are not logged on.
+{% endif %}
+
+
+

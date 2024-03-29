@@ -1,0 +1,47 @@
+{% if session.username %}
+
+<style>
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    th, td {
+      border: 1px solid black;
+      padding: 8px;
+      text-align: left;
+    }
+
+    tr.border-bottom td {
+      border-bottom: 2px solid black;
+    }
+</style>
+
+<p>Hi {{ session.username }}, here are the pdfs you have uploaded :))</p>
+<table>
+
+{% for book in books %}
+  <tr>
+    <th>ID</th>
+    <th>Title</th>
+    <th>Filename</th>
+    <th>Language</th>
+    <th>Author</th>
+    <th>ISBN</th>
+  </tr>
+  <tr>
+    <td>{{ book.id }}</td>
+    <td>{{ book.title }}</td>
+    <td>{{ book.filename }}</td>
+    <td>{{ book.language }}</td>
+    <td>{{ book.author }}</td>
+    <td>{{ book.isbn }}</td>
+  </tr>
+{% endfor %}
+</table>
+
+{% else %}
+It appears you are not logged on.
+{% endif %}
+
+

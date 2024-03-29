@@ -1,9 +1,11 @@
 {% if session.username %}
 <p>Hi {{ session.username }} :))</p>
 <p>Here are your books:</p>
-<a href="/pair">New book pair</a><br></br>
-<a href="/logout">Log out</a><br></br>
+<a href="/create_new_pair">New book pair</a><br></br>
+<a href="/view_pairs">View your pairs of pdfs</a><br></br>
 <a href="/upload">Upload a pdf</a><br></br><br></br>
+<a href="/view_uploads">See uploaded pdfs</a><br></br>
+<a href="/logout">Log out</a><br></br>
 {% else %}
 Viestien määrä: {{ count }}
 <hr>

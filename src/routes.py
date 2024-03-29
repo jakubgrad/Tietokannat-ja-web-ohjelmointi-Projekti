@@ -1,6 +1,7 @@
 import db
 import json
 import books
+import pairs
 from PyPDF2 import PdfReader
 import os
 from app import app, ALLOWED_EXTENSIONS
@@ -24,17 +25,40 @@ def form():
 def login_with_id(id):
     return render_template("login.html", message_id=id)
 
-@app.route("/create_pair",methods=["GET","POST"])
-def pair(): 
+@app.route("/read_pair/<int:pair_id>",methods=["GET","POST"])
+def read_pair(pair_id): 
     if request.method == "GET":
-        print("user id " + str(users.user_id()))
+        if not pairs.check_id_validity(pair_id,users.user_id()):
+            return "Pair not available"
+        pair = pairs.fetch_pair_by_id(pair_id)
+        book1 = books.fetch_book_by_id(pair.book1_id)
+        book2 = books.fetch_book_by_id(pair.book2_id)
+        return render_template("read_pair.html", pair=pair, book1=book1, book2=book2)
+
+@app.route("/create_new_pair",methods=["GET","POST"])
+def create_new_pair(): 
+    if request.method == "GET":
         if users.user_id()!=0:
-            return render_template("pair.html")
+            return render_template("create_new_pair.html", books = books.fetch_all_for_user_id(users.user_id()))
         else:
             return redirect("/")
     if request.method == "POST":
-        return "TBD"
+        name = request.form["name"]
+        book1_id = request.form["book1_id"]
+        book2_id = request.form["book2_id"]
+        if pairs.create_new_pair(name, users.user_id(), book1_id, book2_id):
+            return redirect("/")
+        else:
+            return "Failed to create the pair"
     
+@app.route("/view_pairs",methods=["GET","POST"])
+def view_pairs(): 
+    if request.method == "GET":
+        if users.user_id()!=0:
+            return render_template("view_pairs.html", pairs = pairs.fetch_all_for_user_id(users.user_id()))
+        else:
+            return redirect("/")
+
 @app.route("/login",methods=["GET","POST"])
 def login():
     if request.method == "GET":
@@ -81,9 +105,9 @@ def register():
 def upload():
     return render_template("upload.html")
 
-#def allowed_file(filename):
-#    return '.' in filename and \
-#           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+@app.route("/view_uploads")
+def view_uploads():
+    return render_template("view_uploads.html", books = books.fetch_all_for_user_id(users.user_id()))
 
 @app.route("/process_pdf", methods=['GET', 'POST'])
 def process_pdf():
@@ -94,12 +118,15 @@ def process_pdf():
         file = request.files['pdf-file']
         if file.filename == '':
             return redirect(request.url)
-        #return books.process_pdf(file)
-        if books.process_pdf(file):
-            return redirect("/upload")
-        else:
-            #implement logic for bad pdfs/other files
+        title = request.form["title"]
+        author = request.form["author"]
+        language = request.form["language"]
+        isbn = request.form["isbn"]
+        if books.process_pdf(file, title, author, language, isbn):
             return redirect("/")
+        else:
+           return "Error in processing the PDF" 
+    return redirect("/")
             
 
 @app.route("/upload_success")

@@ -13,11 +13,10 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def process_pdf(file):
+def process_pdf(file, title, author, language, isbn):
     filename = file.filename
     if file and allowed_file(file.filename):
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #would be nice to inform the user that it went through
         reader = PdfReader("../uploads/"+filename)
         number_of_pages = len(reader.pages)
         page = reader.pages[0]
@@ -29,7 +28,7 @@ def process_pdf(file):
         try:
             easy_json_array = {"title": "example glossary"}
             sql = "INSERT INTO books (title, user_id, filename, language, author, isbn, json) VALUES (:title, :user_id, :filename, :language, :author, :isbn, :json);"
-            db.session.execute(text(sql), {"title":"sample title", "user_id":1, "filename":"filename", "language":"english", "author":"rowling", "isbn":"189jd1s", "json":json_array})
+            db.session.execute(text(sql), {"title":title, "user_id":users.user_id(), "filename":filename, "language":language, "author":author, "isbn":isbn, "json":json_array})
             db.session.commit()
         except Exception as e:
             print(f"Error processing PDF: {e}")
@@ -39,21 +38,15 @@ def process_pdf(file):
     return False 
 
 
-def fetch_all(username, password):
-    sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE user_id={users.user_id()}"
-    result = db.session.execute(text(sql), {"username":username})
-    user = result.fetchone()    
-    if not user:
-        return False 
-    else:
-        hash_value = user.password
-        if check_password_hash(hash_value, password):
-            #correct username and password
-            session["username"] = username
-            return True 
-        else:
-            #invalid password
-            return False 
+def fetch_all_for_user_id(user_id):
+    sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE user_id=:user_id"
+    result = db.session.execute(text(sql), {"user_id":user_id})
+    return result.fetchall()    
+
+def fetch_book_by_id(id):
+    sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE id=:id"
+    result = db.session.execute(text(sql), {"id":id})
+    return result.fetchone()    
 
 def logout():
     del session["username"]
