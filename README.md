@@ -53,3 +53,7 @@ Now your prompt should be preceeded with `(venv)` and you can install the depend
 ```
 pip install -r requirements.txt      
 ```
+Declare environment variables:
+```
+echo -e "DATABASE_URL=postgresql+psycopg2://\nSECRET_KEY=a8cbee4648c1a65ba12c5b590852edab" > .env
+```
