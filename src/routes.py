@@ -29,7 +29,7 @@ def login_with_id(id):
 def read_pair(pair_id): 
     if request.method == "GET":
         if not pairs.check_id_validity(pair_id,users.user_id()):
-            return "Pair not available"
+            return render_template("error.html", message="Pair not available")
         pair = pairs.fetch_pair_by_id(pair_id)
         book1 = books.fetch_book_by_id(pair.book1_id)
         book2 = books.fetch_book_by_id(pair.book2_id)
