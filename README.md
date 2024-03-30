@@ -15,3 +15,30 @@ The database would need to have at least the following tables:
 -a table for named bookmarks, purely out of convenience for the reader
 -a table for saved words. I also want to include a search box for translation using trans, a bash script that very quickly translates sentences and individual words that I have hotkeyed on my computer
 ```
+
+Manual installation instructions (on the way is a single script that could handle installation):
+Install postgresql if you haven't already. You can follow the instructions [here](https://github.com/hy-tsoha/local-pg) or do the following at your university computer:
+```
+cd ~
+touch .bashrc #possibly the file existed already
+git clone https://github.com/hy-tsoha/local-pg.git
+bash local-pg/pg-install.sh install .bashrc
+```
+To start postgresql database, run:
+```
+source .bashrc # or reload the terminal or log out and log in
+start-pg.sh  
+```
+The database is necessary for the application to work, but once you're finished using the application, remember to close it with `Ctrl + c`. Now that your database is running, in a separate terminal run:
+```
+psql -h ~/pgsql/sock/ 
+```
+If your prompt has changed to `username=#`, that means that psql works correctly. You can exit it by pressing `Ctrl + d`.
+Now let's download this repository:
+```
+git clone https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti.git
+```
+Now you want to populate the database with tables and some sample data:
+```
+psql -h ~/pgsql/sock/ < Tietokannat-ja-web-ohjelmointi-Projekti/schema.sql 
+```
