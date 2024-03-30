@@ -34,11 +34,26 @@ The database is necessary for the application to work, but once you're finished 
 psql -h ~/pgsql/sock/ 
 ```
 If your prompt has changed to `username=#`, that means that psql works correctly. You can exit it by pressing `Ctrl + d`.
-Now let's download this repository:
+Now let's download this repository. The location is actually important here, since if we install in a symlinked directory like Desktop, Downloads, or Documents, we won't be able to start a Python virtual environment later on. For me, installing in my /home/ad/lxhome/g/<username>/Linux directory works the best. So you can simply go over to: 
 ```
+cd /home/ad/lxhome/g/<your_username>/Linux
 git clone https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti.git
 ```
 Now you want to populate the database with tables and some sample data:
 ```
 psql -h ~/pgsql/sock/ < Tietokannat-ja-web-ohjelmointi-Projekti/schema.sql 
+```
+Go to the repository, install and enter the virtual environment:
+```
+cd Tietokannat-ja-web-ohjelmointi-Projekti/
+python3 -m venv venv #It can take 20 seconds. Also, if you get Errno 95, you need to download the repository somewhere else and run this line inside it
+source venv/bin/activate
+```
+Now your prompt should be preceeded with `(venv)` and you can install the dependencies for the application:
+```
+pip install -r requirements.txt      
+```
+Declare environment variables:
+```
+echo -e "DATABASE_URL=postgresql+psycopg2://\nSECRET_KEY=a8cbee4648c1a65ba12c5b590852edab" > .env
 ```
