@@ -1,8 +1,5 @@
 from db import db
-import users
-from flask import session, redirect 
 from sqlalchemy import text
-import os
 import json
 
 def check_id_validity(pair_id, user_id):

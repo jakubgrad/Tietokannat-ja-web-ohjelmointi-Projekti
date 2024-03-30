@@ -1,7 +1,5 @@
 from db import db
 import users
-from flask import session, redirect 
-from werkzeug.security import check_password_hash, generate_password_hash
 from sqlalchemy import text
 from app import app, ALLOWED_EXTENSIONS
 import os
