@@ -36,16 +36,5 @@ def register(username, password):
         return False
     return login(username, password)
 
-'''
-def register():
-    username = request.form["username"]
-    password = request.form["password"]
-    hash_value = generate_password_hash(password)
-    sql = "INSERT INTO users (username, password) VALUES (:username, :password) RETURNING id"
-    result = db.session.execute(text(sql), {"username":username, "password":hash_value})
-    user_id = result.fetchone()[0]
-    db.session.commit()
-    return redirect("/")
-'''
 def user_id():
     return session.get("user_id",0)

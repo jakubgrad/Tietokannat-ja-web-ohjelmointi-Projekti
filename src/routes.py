@@ -123,9 +123,10 @@ def process_pdf():
         language = request.form["language"]
         isbn = request.form["isbn"]
         if books.process_pdf(file, title, author, language, isbn):
-            return redirect("/")
+            return redirect("/view_uploads")
         else:
-           return "Error in processing the PDF" 
+            return render_template("error.html", message="Error in processing the PDF")
+
     return redirect("/")
             
 
