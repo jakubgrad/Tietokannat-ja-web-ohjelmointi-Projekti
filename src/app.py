@@ -1,8 +1,6 @@
-from flask import redirect, render_template, request, session, Flask, flash, url_for
-import json
+from flask import Flask
 import os
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import text
 
 UPLOAD_FOLDER = '../uploads'
 ALLOWED_EXTENSIONS = {'pdf'}
