@@ -15,3 +15,18 @@ The database would need to have at least the following tables:
 -a table for named bookmarks, purely out of convenience for the reader
 -a table for saved words. I also want to include a search box for translation using trans, a bash script that very quickly translates sentences and individual words that I have hotkeyed on my computer
 ```
+
+Instructions for use:
+Install postgresql if you haven't already. You can follow the instructions [here](https://github.com/hy-tsoha/local-pg) or do the following at your university computer:
+```
+cd ~
+touch .bashrc #possibly the file existed already
+git clone https://github.com/hy-tsoha/local-pg.git
+bash local-pg/pg-install.sh install .bashrc
+```
+To start postgresql database, run:
+```
+source .bashrc # or reload the terminal or log out and log in
+start-pg.sh  
+```
+Now that your database is running, ....
