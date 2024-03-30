@@ -43,8 +43,13 @@ Now you want to populate the database with tables and some sample data:
 ```
 psql -h ~/pgsql/sock/ < Tietokannat-ja-web-ohjelmointi-Projekti/schema.sql 
 ```
-Go to the repository and enter the virtual environment:
+Go to the repository, install and enter the virtual environment:
 ```
 cd Tietokannat-ja-web-ohjelmointi-Projekti/
-python3 -m venv venv #If you get Errno 95, you need to download the repository somewhere else and run this line inside it
+python3 -m venv venv #It can take 20 seconds. Also, if you get Errno 95, you need to download the repository somewhere else and run this line inside it
+source venv/bin/activate
+```
+Now your prompt should be preceeded with `(venv)` and you can install the dependencies for the application:
+```
+pip install -r requirements.txt      
 ```
