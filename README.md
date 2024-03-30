@@ -7,6 +7,8 @@ The assumption is that the uploaded books were purchased and used by users only 
 
 Technical details: the project has many dependencies, including `Poetry`, `Python Flask`, `Pytest`, and the list will expland.  I'm using `Poetry` as my dependency manager. If it's recommended to just stick to using virtual environments instead, I can switch :sunflower:
 
+Tested using https://vdi.helsinki.fi/
+
 The database would need to have at least the following tables:
 ```
 -a table with users (username as email and password), possibly the same or a separate table with administrators 
