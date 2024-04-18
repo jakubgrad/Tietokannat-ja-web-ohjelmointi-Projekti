@@ -1,21 +1,34 @@
+
 {% if session.username %}
+
+{% extends "layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+<h2>Main page</h2>
+
 <p>Hi {{ session.username }} :))</p>
-<p>Here are your books:</p>
-<a href="/create_new_pair">New book pair</a><br></br>
-<a href="/view_pairs">View your pairs of pdfs</a><br></br>
-<a href="/upload">Upload a pdf</a><br></br><br></br>
-<a href="/view_uploads">See uploaded pdfs</a><br></br>
-<a href="/logout">Log out</a><br></br>
+<p>To begin using the app, upload at least two pdfs of a book in two different languages and then create a pair out of them to be able to read billingually. The repository contains tested snippets of Harry Poter and the Half-Blood Prince in English and Finnish that you can see. If anything is unclear, feel free to look at the <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/blob/main/README.md">README</a></p>
+<p style="opacity: {{ '0.5' if dimmed_pair_options else '1' }};" ><a href="/view_pairs">View your pairs of pdfs</a></p>
+<p style="opacity: {{ '0.5' if dimmed_pair_options else '1' }};" ><a href="/create_new_pair">New book pair</a></p>
+<p style="opacity: 0.5; display:{{ 'inline' if dimmed_pair_options else 'none' }};">You should upload at least 2 pdfs first</p>
+<p><a href="/upload">Upload a pdf</a></p>
+<p><a href="/view_uploads">See uploaded pdfs</a></p>
+<p><a href="/logout">Log out</a></p>
+
+{% endblock %}
+
 {% else %}
-Viestien määrä: {{ count }}
+
+<title>BiReader</title>
+<h1>BiReader</h1>
+<a href="/login">Login</a> &nbsp;&nbsp;&nbsp;    
+<a href="/register">Register</a>
+
 <hr>
-{% for message in messages %}
-{{ message.content }}
+Login or Register to use the app!
 <hr>
-{% endfor %}
-<a href="/new">Send a message</a><br></br>
-<a href="/register">Register</a><br></br>
-<a href="/login">Log in</a><br></br>
+ <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
+
 {% endif %}
 
 
