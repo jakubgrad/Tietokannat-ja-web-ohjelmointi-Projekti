@@ -6,7 +6,7 @@ from PyPDF2 import PdfReader
 import os
 from app import app, ALLOWED_EXTENSIONS
 from flask import render_template, request, redirect
-import messages, users
+import users
 
 @app.route("/")
 def index():
