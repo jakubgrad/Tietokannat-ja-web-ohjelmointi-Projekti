@@ -1,7 +1,23 @@
+{% if session.username %}
+
+It appears you are logged in
+
+{% else %}
+
+{% extends "layout_logged_out.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+<h2>Register</h2>
+
+
 <form action="/register" method="POST">
-Register <br>
-<textarea name="username" placeholder="Username..." rows="3" cols="40"></textarea>
-<textarea type="password" name="password" placeholder="Password..." rows="3" cols="40"></textarea>
+<input type="text" name="username" placeholder="Username..." rows="3" cols="40"></input><br/>
+<input type="password" name="password" placeholder="Password..." rows="3" cols="40"></input>
 <br>
 <input type="submit" value="Register!">
 </form>
+
+{% endblock %}
+
+{% endif %}
+
