@@ -1,4 +1,9 @@
 {% if session.username %}
+{% extends "layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+<h2>Create new pair</h2>
+
 Use this form to create a new pair of books for billingual reading
 <form action="/create_new_pair" method="POST">
 Create new pair! <br>
@@ -52,6 +57,8 @@ Create new pair! <br>
   </tr>
 {% endfor %}
 </table>
+
+{% endblock %}
 
 {% else %}
 It appears you are not logged on.
