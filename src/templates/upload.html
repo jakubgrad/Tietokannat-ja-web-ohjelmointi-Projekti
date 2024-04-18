@@ -1,3 +1,11 @@
+
+{% if session.username %}
+{% extends "layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+<h2>Upload pdf</h2>
+
+
 <form action="/process_pdf" method="post" enctype="multipart/form-data">
         Upload a PDF <br>
         <input type="file" name="pdf-file" style="padding:10px" required><br>
@@ -6,5 +14,11 @@
         <input type="language" name="language" placeholder="language..." ><br>
         <input type="isbn" name="isbn" placeholder="isbn..." ><br>
         <input type="submit" value="Upload!"><br>
-
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 </form>
+
+{% endblock %}
+
+{% else %}
+It appears you are not logged on.
+{% endif %}
