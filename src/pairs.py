@@ -27,6 +27,22 @@ def create_new_pair(name, user_id, book1_id, book2_id):
         return False 
     return True
 
+def find_id_of_pair_by_user_id_and_name(user_id,name):
+    try:
+        print(f"user_id:{user_id}")
+        print(f"name:{name}")
+        sql = "SELECT id FROM pairs WHERE user_id=:user_id AND name=:name;"
+        result = db.session.execute(text(sql), {"user_id":user_id,"name":name})
+        pair = result.fetchone()    
+        print(f"pair:{pair}")
+        return pair[0]
+    except Exception as e:
+        #print(f"Error for insert into pairs: {e}")
+        print("Query failed!")
+    return False 
+
+
+
 def fetch_pair_by_id(id):
     sql = f"SELECT id, name, book1_id, book2_id FROM pairs WHERE id=:id"
     result = db.session.execute(text(sql), {"id":id})
@@ -36,4 +52,18 @@ def fetch_all_for_user_id(user_id):
     sql = f"SELECT id, name, book1_id, book2_id FROM pairs WHERE user_id=:user_id"
     result = db.session.execute(text(sql), {"user_id":user_id})
     return result.fetchall()    
+
+def delete_pair_by_id(id):
+    sql = "DELETE FROM pairs WHERE id=:id;"
+    try:
+        db.session.execute(text(sql), {"id":id})
+        db.session.commit()
+    except:
+        return False
+
+    if fetch_pair_by_id(id):
+        return False
+    return True
+
+
 
