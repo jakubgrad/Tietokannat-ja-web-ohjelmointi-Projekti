@@ -19,9 +19,19 @@ def process_pdf(file, title, author, language, isbn):
         number_of_pages = len(reader.pages)
         page = reader.pages[0]
         text_from_pdf = page.extract_text()
-        sentences = text_from_pdf.split(". ")
-        json_array = json.dumps(sentences)
-        print(json_array)
+        print(f"text_from_pdf {text_from_pdf}" )
+        sentences = text_from_pdf.split(".")
+        print(f"sentences {sentences}" )
+        result = []
+        for sentence in sentences:
+            words = sentence.split("\n")
+            print(f"words: {words}")
+            clean_words = [word.replace(" ", "") for word in words]
+            print(f"clean words: {clean_words}")
+            result.append(clean_words)
+        print(f"result:{result}")
+        json_array = json.dumps(result)
+        print(f"json_array {json_array}" )
         print( f'Number of pages: {number_of_pages}, text: {text}')
         try:
             easy_json_array = {"title": "example glossary"}
@@ -44,5 +54,22 @@ def fetch_all_for_user_id(user_id):
 def fetch_book_by_id(id):
     sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE id=:id"
     result = db.session.execute(text(sql), {"id":id})
-    return result.fetchone()    
+    if result:
+        return result.fetchone()    
+    return False
+
+def delete_book_by_id(id):
+    sql = "DELETE FROM books WHERE id=:id;"
+    try:
+        db.session.execute(text(sql), {"id":id})
+        db.session.commit()
+    except:
+        return False
+
+    if fetch_book_by_id(id):
+        return False
+    return True
+
+
+
 
