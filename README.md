@@ -7,6 +7,8 @@ The assumption is that the uploaded books were purchased and used by users only 
 
 Technical details: the project has many dependencies, including `Poetry`, `Python Flask`, `Pytest`, and the list will expland.  I'm using `Poetry` as my dependency manager. If it's recommended to just stick to using virtual environments instead, I can switch :sunflower:
 
+Tested using https://vdi.helsinki.fi/
+
 The database would need to have at least the following tables:
 ```
 -a table with users (username as email and password), possibly the same or a separate table with administrators 
@@ -57,3 +59,16 @@ Declare environment variables:
 ```
 echo -e "DATABASE_URL=postgresql+psycopg2://\nSECRET_KEY="$(python3 -c "import secrets; print(secrets.token_hex(16))") > .env
 ```
+Go to `src` and run the program:
+```
+cd src/
+flask run
+```
+You should see:
+```
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+```
+And you can now head over to localhost:5000 in your browser and see the program in action.
