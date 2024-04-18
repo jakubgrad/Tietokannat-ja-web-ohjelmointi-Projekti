@@ -1,13 +1,131 @@
+{% extends "layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+
+<h2>Login page</h2>
+
 {% if session.username %}
 
+{#
 <p>{{ pair.name }}</p>
-<p>{{ book1.json }}</p>
-<p>{{ book2.json }}</p>
+<p>{{ book1.json if book1.json else 0  }}</p>
+<p>{{ book2.json if book2.json else 0}}</p>
+book1.json[1][1]
+<p>{{ book1.json[1][1] if book1.json[1][1] else 0}}</p>
+result:
+<p>{{ result if result else 0}}</p>
 
+#}
+{#
+[["This", "is", "an", "example", "file"]
+, ["", "Stuff", "is", "divided", "using", "the", "comma"], ["", "So", "this", "sentence", "should", "be", "in", "element", "numb
+er", "[2]", "if", "you", "count", "from", "0"], ["", "This", "sentence", "is", "fourth"], ["", "This", "sentence", "is", "fifth"
+], ["", "This", "sentence", "is", "sixth"], ["", "And", "this", "sentence", "is", "seventh"], [""]]
+#}
+{{counter if counter else 0}}
+
+<table>
+  <tr>
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 + 3 if counter1 else 3 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 + 3 if counter2 else 3 }}">
+            <input type="submit" value="Next paragraph">
+        </form>
+    </th>
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 3 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 - 3 if counter2 else 0 }}">
+            <input type="submit" value="Previous paragraph">
+        </form>
+    </th>
+    <th>
+
+    </th>
+  </tr>
+  <tr style="height: 80px;">
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1+1 if counter1 else 1 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+            <input type="submit" value="+">
+        </form>
+    </th>
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+            <input type="submit" value="-">
+        </form>
+    </th>
+    <th>
+        {{ sentences1 if sentences1 else 0}}
+    </th>
+
+  <tr style="height: 80px;">
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1  if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2+1 if counter2 else 1 }}">
+            <input type="submit" value="+">
+        </form>
+    </th>
+    <th>
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2-1 if counter2 else 0 }}">
+            <input type="submit" value="-">
+        </form>
+    </th>
+    <th>
+        {{ sentences2 if sentences2 else 0}}
+    </th>
+  </tr>
+
+</table>
+
+<form action="/read_pair/{{ pair.id }}" method="POST">
+    <input type="text" name="counter" value="{{ counter if counter else 0 }}">
+    <input type="text" name="counter1" value="{{ counter1 if counter1 else 0 }}">
+    <input type="text" name="counter2" value="{{ counter2 if counter2 else 0 }}">
+    <input type="submit" value="Update counter">
+</form>
+
+<form action="/read_pair/{{ pair.id }}" method="POST">
+    <input type="text" name="counter" value="{{ counter if counter else 0 }}">
+    <input type="text" name="counter1" value="{{ counter1 + 1 if counter1 else 1 }}">
+    <input type="text" name="counter2" value="{{ counter2 + 1 if counter2 else 1 }}">
+    <input type="submit" value="Increase by 1">
+</form>
+
+<form action="/read_pair/{{ pair.id }}" method="POST">
+    <input type="text" name="counter" value="{{ counter if counter else 0 }}">
+    <input type="text" name="counter1" value="{{ counter1 - 1 if counter1 else 0 }}">
+    <input type="text" name="counter2" value="{{ counter2 - 1 if counter2 else 0 }}">
+    <input type="submit" value="Decrease by 1">
+</form>
+
+<form action="/read_pair/{{ pair.id }}" method="POST">
+    <input type="text" name="counter" value="{{ counter if counter else 0 }}">
+    <input type="text" name="counter1" value="{{ counter1 + 3 if counter1 else 0 }}">
+    <input type="text" name="counter2" value="{{ counter2 + 3 if counter2 else 0 }}">
+    <input type="submit" value="Next sentences">
+</form>
+
+sentences1:
+<p>{{ sentences1 if sentences1 else 0}}</p>
+sentences2:
+<p>{{ sentences2 if sentences2 else 0}}</p>
 
 {% else %}
 It appears you are not logged on.
 {% endif %}
 
-
-
+{% endblock %}
