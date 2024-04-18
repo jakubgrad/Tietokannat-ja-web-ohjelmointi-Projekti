@@ -59,3 +59,16 @@ Declare environment variables:
 ```
 echo -e "DATABASE_URL=postgresql+psycopg2://\nSECRET_KEY="$(python3 -c "import secrets; print(secrets.token_hex(16))") > .env
 ```
+Go to `src` and run the program:
+```
+cd src/
+flask run
+```
+You should see:
+```
+ * Debug mode: off
+WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+ * Running on http://127.0.0.1:5000
+Press CTRL+C to quit
+```
+And you can now head over to localhost:5000 in your browser and see the program in action.
