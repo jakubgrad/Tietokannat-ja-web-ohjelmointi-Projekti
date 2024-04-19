@@ -41,32 +41,9 @@ def read_pair(pair_id):
 
         counter1=0
         counter2=0
-
-        SENTENCE_LENGTH = 3
-        max_counter1 = len(book1.json)-SENTENCE_LENGTH 
-        max_counter2 = len(book2.json)-SENTENCE_LENGTH 
-
-        if max_counter1 < counter1:
-            counter1 = max_counter1
-        if max_counter2 < counter2:
-            counter2 = max_counter2
-
-        if counter1 < 0:
-            counter1 = 0
-        if counter2 < 0:
-            counter2 = 0
-
-        list1 = book1.json[counter1] + ["."]+ book1.json[counter1+1] + ["."]+book1.json[counter1+2]+["."]
-        print("list1: {list1}")
-        sentences1 = " ".join(list1)
-        print("sentences1: {sentences1}")
-
-        list2 = book2.json[counter2] + ["."]+ book2.json[counter2+1] + ["."]+book2.json[counter2+2]+["."]
-        print("list2: {list2}")
-        sentences2 = " ".join(list2)
-        print("sentences2: {sentences2}")
-        #counters = (counter1, counter2)
-
+        #list could be produced by pair
+        sentences1 = pairs.produce_sentences(book1, counter1)
+        sentences2 = pairs.produce_sentences(book2, counter2)
         return render_template("read_pair.html", pair=pair, book1=book1, book2=book2, result=result,
             sentences1=sentences1,sentences2=sentences2, counter1=counter1, counter2=counter2)
         return render_template("read_pair.html", pair=pair, book1=book1, book2=book2, counter1=0,counter2=0)
