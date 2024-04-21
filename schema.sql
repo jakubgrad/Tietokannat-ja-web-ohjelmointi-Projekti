@@ -2,5 +2,13 @@ CREATE TABLE messages (id SERIAL PRIMARY KEY, content TEXT);
 CREATE TABLE users (id SERIAL PRIMARY KEY, username TEXT, password TEXT);
 CREATE TABLE books (id SERIAL PRIMARY KEY, title TEXT, user_id INTEGER REFERENCES users, filename TEXT, language TEXT, author TEXT, isbn TEXT, json JSONB);
 CREATE TABLE pairs (   id SERIAL PRIMARY KEY,  user_id INTEGER REFERENCES users, name TEXT,  created_at TIMESTAMP, book1_id INTEGER REFERENCES books,  book2_id INTEGER REFERENCES books );
+CREATE TABLE bookmarks (
+   id SERIAL PRIMARY KEY,
+   pair_id INTEGER REFERENCES pairs ON DELETE CASCADE,
+   book1 INTEGER,
+   book2 INTEGER,
+   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+   last_read TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
