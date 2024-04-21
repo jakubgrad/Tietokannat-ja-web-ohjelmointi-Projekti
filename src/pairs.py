@@ -65,5 +65,17 @@ def delete_pair_by_id(id):
         return False
     return True
 
+def produce_sentences(book, counter):
+    list = book.json[counter] + ["."]+ book.json[counter+1] + ["."]+book.json[counter+2]+["."]
+    print("list: {list}")
+    sentences = " ".join(list)
+    print("sentences: {sentences}")
+    return sentences
 
+def check_counter(counter, max_counter):
+    if max_counter < counter:
+        counter = max_counter
+    if counter < 0:
+        counter = 0
+    return counter
 
