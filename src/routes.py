@@ -1,4 +1,3 @@
-import db
 import json
 import users, books, pairs, bookmarks
 from PyPDF2 import PdfReader
@@ -20,14 +19,6 @@ def index():
 def new():
     return render_template("new.html")
 
-@app.route("/form")
-def form():
-    return render_template("form.html")
-
-@app.route("/login/<int:id>")
-def login_with_id(id):
-    return render_template("login.html", message_id=id)
-
 @app.route("/read_pair/<int:pair_id>",methods=["GET","POST"])
 def read_pair(pair_id): 
     if request.method == "GET":
@@ -44,10 +35,11 @@ def read_pair(pair_id):
         sentences2 = pairs.produce_sentences(book2, counter2)
         return render_template("read_pair.html", pair=pair, book1=book1, book2=book2, result=result,
             sentences1=sentences1,sentences2=sentences2, counter1=counter1, counter2=counter2)
-        return render_template("read_pair.html", pair=pair, book1=book1, book2=book2, counter1=0,counter2=0)
+
     if request.method == "POST":
         if not pairs.check_id_validity(pair_id,users.user_id()):
             return render_template("error.html", message="Pair not available")
+
         counter = int(request.form["counter"])
         counter1 = int(request.form["counter1"])
         counter2 = int(request.form["counter2"])
@@ -68,13 +60,19 @@ def read_pair(pair_id):
         counter1 = pairs.check_counter(counter1, max_counter1)
         counter2 = pairs.check_counter(counter2, max_counter2)
 
+
+        if "form_purpose" in request.form:
+            print("form_purpose in request form") 
+            if request.form["form_purpose"] == "save_bookmark":
+                print("saving bookmark success:",bookmarks.save_bookmark(pair_id, counter1, counter2))
+
         if "bookmark_id" in request.form:
             print("bookmark selected") 
             selected_bookmark_id = request.form["bookmark_id"]
             selected_bookmark = bookmarks.fetch_bookmark_by_id(selected_bookmark_id)
             if selected_bookmark:
-                counter1 = selected_bookmark.book1 
-                counter2 = selected_bookmark.book2 
+                counter1 = selected_bookmark.counter1 
+                counter2 = selected_bookmark.counter2 
 
         sentences1 = pairs.produce_sentences(book1, counter1)
         sentences2 = pairs.produce_sentences(book2, counter2)
@@ -180,6 +178,16 @@ def delete_pair(id):
         if pairs.delete_pair_by_id(id):
             return render_template("error.html", message ="Successfully deleted")
         return render_template("error.html", message =f"Failed to delete pair {id}") 
+
+@app.route("/delete_bookmark/<int:id>", methods=['GET', 'POST'])
+def delete_bookmark(id):
+    if request.method == 'GET':
+        return render_template("error.html", message="Delete API")
+    if request.method == 'POST':
+        if bookmarks.delete_bookmark_by_id(id):
+            return render_template("error.html", message ="Successfully deleted")
+        return render_template("error.html", message =f"Failed to delete bookmark {id}") 
+
 
 @app.route("/process_pdf", methods=['GET', 'POST'])
 def process_pdf():
