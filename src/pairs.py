@@ -41,7 +41,19 @@ def find_id_of_pair_by_user_id_and_name(user_id,name):
         print("Query failed!")
     return False 
 
-
+def find_pair_that_references_book_id(book_id):
+    print(f"book_id:{book_id}")
+    try:
+        db.session.commit()
+        sql = "SELECT id, user_id, name, book1_id, book2_id FROM pairs WHERE book1_id=:book1_id OR book2_id=:book2_id;"
+        result = db.session.execute(text(sql), {"book1_id":int(book_id),"book2_id":int(book_id)})
+        db.session.commit()
+        pair = result.fetchone()    
+        print(f"pair:{pair}")
+        return pair
+    except Exception as e:
+        print(f"Finding pair that references book id failed because: {e}")
+    return False 
 
 def fetch_pair_by_id(id):
     sql = f"SELECT id, name, book1_id, book2_id FROM pairs WHERE id=:id"
@@ -72,7 +84,9 @@ def produce_sentences(book, counter):
     print("sentences: {sentences}")
     return sentences
 
-def check_counter(counter, max_counter):
+def validate_and_fix_counter(counter, book):
+    SENTENCE_LENGTH = 3
+    max_counter = len(book.json)-SENTENCE_LENGTH 
     if max_counter < counter:
         counter = max_counter
     if counter < 0:
