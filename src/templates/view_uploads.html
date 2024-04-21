@@ -46,10 +46,10 @@
             <button type="submit">Delete</button>
         </form>
     </td>
-    <td>{{ book.filename }}</td>
-    <td>{{ book.language }}</td>
-    <td>{{ book.author }}</td>
-    <td>{{ book.isbn }}</td>
+    <td>{{ book.filename if book.filename else "..." }}</td>
+    <td>{{ book.language if book.language else "..." }}</td>
+    <td>{{ book.author if book.author else "..."  }}</td>
+    <td>{{ book.isbn if book.isbn else "..."  }}</td>
   </tr>
 {% endfor %}
 </table>
