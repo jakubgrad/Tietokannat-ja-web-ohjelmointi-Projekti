@@ -90,3 +90,7 @@ rm -rf ~/.config/chromium/Singleton*
 rm -rf ~/.config/google-chrome/Singleton*
 ```
 It frees up both chrome and chromium.
+# To do
+- I want to implement the UI using a bootstrap, thus giving it a nicer look.
+- I want to implement all the tables mentioned above
+- I want to host the application on my server
