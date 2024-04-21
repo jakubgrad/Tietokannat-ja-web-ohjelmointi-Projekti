@@ -1,12 +1,10 @@
 import db
 import json
-import books
-import pairs
+import users, books, pairs, bookmarks
 from PyPDF2 import PdfReader
 import os
 from app import app, ALLOWED_EXTENSIONS
 from flask import render_template, request, redirect
-import users
 
 @app.route("/")
 def index():
@@ -53,40 +51,37 @@ def read_pair(pair_id):
         counter = int(request.form["counter"])
         counter1 = int(request.form["counter1"])
         counter2 = int(request.form["counter2"])
+        counter2 = int(request.form["counter2"])
 
-        print(f"counter1:{counter1}")
-        print(f"counter2:{counter2}")
         pair = pairs.fetch_pair_by_id(pair_id)
         book1 = books.fetch_book_by_id(pair.book1_id)
         book2 = books.fetch_book_by_id(pair.book2_id)
+
+        bookmarks_of_pair = bookmarks.fetch_bookmarks_by_pair_id(pair_id)
+        print(f"bookmarks_of_pair: {bookmarks_of_pair}" )
+        #bookmarks_of_pair: [(1, 18, datetime.datetime(2024, 4, 19, 12, 49, 33, 984988), datetime.datetime(2024, 4, 19, 12, 49, 33, 984988)), (2, 18, datetime.datetime(2024, 4, 19, 12, 50, 49, 314709), datetime.datetime(2024, 4, 19, 12, 50, 49, 314709))]
 
         SENTENCE_LENGTH = 3
         max_counter1 = len(book1.json)-SENTENCE_LENGTH 
         max_counter2 = len(book2.json)-SENTENCE_LENGTH 
 
-        if max_counter1 < counter1:
-            counter1 = max_counter1
-        if max_counter2 < counter2:
-            counter2 = max_counter2
+        counter1 = pairs.check_counter(counter1, max_counter1)
+        counter2 = pairs.check_counter(counter2, max_counter2)
 
-        if counter1 < 0:
-            counter1 = 0
-        if counter2 < 0:
-            counter2 = 0
+        if "bookmark_id" in request.form:
+            print("bookmark selected") 
+            selected_bookmark_id = request.form["bookmark_id"]
+            selected_bookmark = bookmarks.fetch_bookmark_by_id(selected_bookmark_id)
+            if selected_bookmark:
+                counter1 = selected_bookmark.book1 
+                counter2 = selected_bookmark.book2 
 
-        list1 = book1.json[counter1] + ["."]+ book1.json[counter1+1] + ["."]+book1.json[counter1+2]+["."]
-        print("list1: {list1}")
-        sentences1 = " ".join(list1)
-        print("sentences1: {sentences1}")
-
-        list2 = book2.json[counter2] + ["."]+ book2.json[counter2+1] + ["."]+book2.json[counter2+2]+["."]
-        print("list2: {list2}")
-        sentences2 = " ".join(list2)
-        print("sentences2: {sentences2}")
-        #counters = (counter1, counter2)
-
+        sentences1 = pairs.produce_sentences(book1, counter1)
+        sentences2 = pairs.produce_sentences(book2, counter2)
+        
         return render_template("read_pair.html", pair=pair, book1=book1, book2=book2, counter=counter, result=result,
-            sentences1=sentences1,sentences2=sentences2, counter1=counter1, counter2=counter2)
+            sentences1=sentences1,sentences2=sentences2, counter1=counter1, counter2=counter2,
+            bookmarks_of_pair=bookmarks_of_pair)
 
 @app.route("/create_new_pair",methods=["GET","POST"])
 def create_new_pair(): 
