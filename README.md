@@ -61,7 +61,7 @@ Now your prompt should be preceeded with `(venv)` and you can install the depend
 ```
 pip install -r requirements.txt      
 ```
-Declare environment variables:
+Because my project using a pdf parser etc. it can also take a bit to intsall the requierements. After that, declare environment variables:
 ```
 echo -e "DATABASE_URL=postgresql+psycopg2://\nSECRET_KEY="$(python3 -c "import secrets; print(secrets.token_hex(16))") > .env
 ```
@@ -78,9 +78,15 @@ WARNING: This is a development server. Do not use it in a production deployment.
 Press CTRL+C to quit
 ```
 And you can now head over to localhost:5000 in your browser and see the program in action.<br/>
+Because of the nature of pdf parsing, the application will reject a lot of pdfs or else, format them in strange ways. Because of it, the repository contains two pdfs that are ready to use and tested, residing in the `/examples` directory. So when using the application for the first time, I recommend to:
+- register
+- click on `Upload a pdf`
+- In the file explorer window click on home, find the `Tietokannat-ja-web-ohjelmointi-Projekti`, go to examples and *voila*, there is J.K Rowling's Half Blood Prince in English and Finnish. Upload the files one after the other. Then, click on `Create a pair of pdfs for billingual reading`, name the pair, select ids 1 and 2 and `Create a new pair!`. You can read right away. `Next paragraph` and `Previous paragraph` move both of the books back and forth 3 sentences by default. `+` and `-` move either of the books by one sentence, so that whenver the two versions have different number of sentences, you can keep reading.
 
 # Troubleshooting
 I found that frequently launching and closing university VMs confused web browsers. For a quick fix when none of your browsers want to open, run:
 ```
-rm -rf ~/.config/chromium/Singleton* && rm -rf ~/.config/google-chrome/Singleton*
+rm -rf ~/.config/chromium/Singleton*
+rm -rf ~/.config/google-chrome/Singleton*
 ```
+It frees up both chrome and chromium.
