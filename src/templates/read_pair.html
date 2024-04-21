@@ -39,7 +39,7 @@ er", "[2]", "if", "you", "count", "from", "0"], ["", "This", "sentence", "is", "
             <input type="submit" value="Previous paragraph">
         </form>
   </tr>
-  <tr style="height: 80px;">
+  <tr style="height: 120px;">
     <th style="text-align: right; width: 4px;">
         <form action="/read_pair/{{ pair.id }}" method="POST">
             <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
@@ -60,7 +60,7 @@ er", "[2]", "if", "you", "count", "from", "0"], ["", "This", "sentence", "is", "
         {{ sentences1 if sentences1 else 0}}
     </th>
 
-  <tr style="height: 80px;">
+  <tr style="height: 120px;">
     <th style="text-align: right; width: 4px;">
         <form action="/read_pair/{{ pair.id }}" method="POST">
             <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
@@ -83,6 +83,23 @@ er", "[2]", "if", "you", "count", "from", "0"], ["", "This", "sentence", "is", "
   </tr>
 
 </table>
+
+{% for bookmark in bookmarks_of_pair %}
+
+<form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+            <input type="number" name="bookmark_id" value={{bookmark.id}}>
+            <input type="submit" value="Load bookmark">
+
+        Last read: {{ bookmark.last_read }} <br>
+        Created: {{ bookmark.created_at.strftime("%Y-%m-%d %H:%M:%S") }} <br>
+        Book 1 progression: {{ bookmark.book1 }} <br>
+        Book 2 progression: {{ bookmark.book2}} <br>
+        </form>
+<hr>
+{% endfor %}
 
 
 {% else %}
