@@ -1,24 +1,30 @@
 # Tietokannat-ja-web-ohjelmointi-Projekti
 A repository for the course project in [Tietokannat ja web-ohjelmointi](https://hy-tsoha.github.io/materiaali/) taken in the 4th period of academic year 2023-2024 at University of Helsinki by a student of Bachelor's Programme in Science.
 
-The goal of the project is to create **an online application that supports billingual reading** in Python using a `Postgres` database. Billingual reading is a practice of reading the same book in 2 languages. The app would allow users to log in and upload pairs of machine-readable pdfs of the same book in two different languages. The website would process the pdfs, perform sentence tokenization using `spacy` or similar library, and then upload them to the server. The users would then be able to choose a pair of books that they uploaded and read them side by side. The goal is to make the UI user friendly, so that there is shortcuts for e.g. skipping the page or aligning the text of the two books and leaving bookmarks.
+The goal of the project is to create **an online application that supports billingual reading** in Python using a `Postgres` database. Billingual reading is a practice of reading the same book in 2 languages. The app would allow users to log in and upload pairs of machine-readable pdfs of the same book in two different languages. The website would process the pdfs, perform sentence tokenization using `spacy` or similar library, and then upload them to the server. The users would then be able to choose a pair of books that they uploaded and read them side by side. The goal is to make the UI user friendly, so that there is e.g. the possiblity pf aligning the text of the two books and leaving bookmarks.
+<p align="center">
+    <img src="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/assets/113715885/52d16808-046b-4268-b40d-c568f68be4ca" width="50%" alt="Description of the image">
+</p>
+
 
 The assumption is that the uploaded books were purchased and used by users only for their own reading. Because of strict rules against intellectual theft, administrators need be able to delete books and users if they violate the Terms of Service or an intellectual right of authors.
 
-Technical details: the project has many dependencies, including `Poetry`, `Python Flask`, `Pytest`, and the list will expland.  I'm using `Poetry` as my dependency manager. If it's recommended to just stick to using virtual environments instead, I can switch :sunflower:
+Technical details: the project has many dependencies, including `Python Flask`, `Flask SqlAlchemy`, `Psycopg2` and so on. The full list is in the `requirements.txt` document and the installation is for them is outlined below. The project use a virtual environment.
+<br>
+Tested using [https://vdi.helsinki.fi/](https://vdi.helsinki.fi/]), university's online virtual machine running on Cubbli.
+<br>
 
-Tested using https://vdi.helsinki.fi/
-
-The database would need to have at least the following tables:
+The database would should eventually have the following tables:
 ```
 -a table with users (username as email and password), possibly the same or a separate table with administrators 
 -a table for uploaded pdfs that contains names, author, cover image, language, details and ids of books
+-a table for pairs of pdfs to read
 -and a table that keeps track of settings and progress for individual users reading a particular pair of books. So for instance which sentence was being read from one book of the pair together with which sentence from the other, by whom, and how many sentences at a time.
 -a table for named bookmarks, purely out of convenience for the reader
 -a table for saved words. I also want to include a search box for translation using trans, a bash script that very quickly translates sentences and individual words that I have hotkeyed on my computer
 ```
 
-Manual installation instructions (on the way is a single script that could handle installation):
+Manual installation instructions created basing on university's Cubbli OS (in production is a single script that could handle installation):<br>
 Install postgresql if you haven't already. You can follow the instructions [here](https://github.com/hy-tsoha/local-pg) or do the following at your university computer:
 ```
 cd ~
@@ -71,4 +77,10 @@ WARNING: This is a development server. Do not use it in a production deployment.
  * Running on http://127.0.0.1:5000
 Press CTRL+C to quit
 ```
-And you can now head over to localhost:5000 in your browser and see the program in action.
+And you can now head over to localhost:5000 in your browser and see the program in action.<br/>
+
+# Troubleshooting
+I found that frequently launching and closing university VMs confused web browsers. For a quick fix when none of your browsers want to open, run:
+```
+rm -rf ~/.config/chromium/Singleton* && rm -rf ~/.config/google-chrome/Singleton*
+```
