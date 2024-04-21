@@ -58,12 +58,14 @@ def fetch_book_by_id(id):
         return result.fetchone()    
     return False
 
+
 def delete_book_by_id(id):
     sql = "DELETE FROM books WHERE id=:id;"
     try:
         db.session.execute(text(sql), {"id":id})
         db.session.commit()
     except:
+        print("deleting failed, perhaps because book doesn't exist")
         return False
 
     if fetch_book_by_id(id):
