@@ -94,3 +94,6 @@ It frees up both chrome and chromium.
 - I want to implement the UI using a bootstrap, thus giving it a nicer look.
 - I want to implement all the tables mentioned above
 - I want to host the application on my server
+
+[Peer review 1](https://github.com/Karri6/db-and-web-dev/issues/3)
+[Peer review 2](https://github.com/rautiais/tohoilykisa/issues/2)
