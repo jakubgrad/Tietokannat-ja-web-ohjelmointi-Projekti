@@ -28,6 +28,8 @@ def create_new_pair():
                 books = books.fetch_all_for_user_id(users.user_id()))
         return redirect("/")
     if request.method == "POST":
+        if users.user_session() != request.form["csrf_token"]:
+            errors.append("CSRF attack detected")
         name = request.form["name"]
         book1_id = request.form["book1_id"]
         book2_id = request.form["book2_id"]
@@ -113,7 +115,7 @@ def view_uploads():
 
 @app.route("/delete_book/<int:id>", methods=['GET', 'POST'])
 def delete_book(book_id):
-    errors=[]
+    errors = []
     if request.method == 'GET':
         return redirect(url_for("view_uploads"))
     if request.method == 'POST':
@@ -145,7 +147,7 @@ def delete_pair(pair_id):
 
 @app.route("/delete_bookmark/<int:id>", methods=['GET', 'POST'])
 def delete_bookmark(bookmark_id):
-    errors=[]
+    errors = []
     bookmark = bookmarks.fetch_bookmark_by_id(bookmark_id)
     pair_id = bookmark[1]
 
@@ -159,7 +161,7 @@ def delete_bookmark(bookmark_id):
 
 @app.route("/delete_all_bookmarks_of_pair/<int:id>", methods=['GET', 'POST'])
 def delete_all_bookmarks_of_pair(pair_id):
-    errors=[]
+    errors = []
     if request.method == 'GET':
         return redirect(url_for("read_pair", pair_id=pair_id))
     if request.method == 'POST':
