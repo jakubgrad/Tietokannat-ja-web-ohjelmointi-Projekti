@@ -1,12 +1,38 @@
 {% if session.username %}
-
 {% extends "layout.html" %}
-{% block title %}Main page{% endblock %}
+{% else %}
+{% extends "layout_logged_out.html" %}
+{% endif %}
+
+
+{% block heading %}
+{% if session.username %}
+Main page
+{% else %}
+Welcome to BiReader
+{% endif %}
+{% endblock %}
+
+{% block title %}
+{% if session.username %}
+Main page
+{% else %}
+Welcome to BiReader
+{% endif %}
+{% endblock %}
+
 {% block content %}
-<h2>Main page</h2>
+
+{% if session.username %}
 
 <p>Hi {{ session.username }} :))</p>
+
+{% if dimmed_pair_options %}
 <p>To begin using the app, upload at least two pdfs of a book in two different languages and then create a pair out of them to be able to read billingually. The repository contains tested snippets of Harry Poter and the Half-Blood Prince in English and Finnish that you can see. If anything is unclear, feel free to look at the <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/blob/main/README.md">README</a></p>
+{% else %}
+<p>If anything is unclear, feel free to look at the <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/blob/main/README.md">README</a></p>
+{% endif %}
+
 <p style="opacity: {{ '0.5' if dimmed_pair_options else '1' }};" ><a href="/view_pairs">View your pairs of pdfs</a></p>
 <p style="opacity: {{ '0.5' if dimmed_pair_options else '1' }};" ><a href="/create_new_pair">New book pair</a></p>
 <p style="opacity: 0.5; display:{{ 'inline' if dimmed_pair_options else 'none' }};">You should upload at least 2 pdfs first</p>
@@ -14,20 +40,18 @@
 <p><a href="/view_uploads">See uploaded pdfs</a></p>
 <p><a href="/logout">Log out</a></p>
 
-{% endblock %}
 
 {% else %}
 
-<title>BiReader</title>
-<h1>BiReader</h1>
-<a href="/login">Login</a> &nbsp;&nbsp;&nbsp;    
-<a href="/register">Register</a>
-
-<hr>
-Login or register to use the app!
-<hr>
- <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
+<p align="center" class="text-justify">
+ BiReader is an online application that supports billingual reading in Python using a Postgres database. Billingual reading is a practice of reading the same book in 2 languages. Users can log in and upload pairs of machine-readable pdfs of the same book in two different languages. The backend then processes the pdfs, performs sentence tokenization using spacy, and then uploads them to the server. The users are then able to choose a pair of books that they uploaded and read them side by side. 
+</p>
 
 {% endif %}
+
+{% endblock %}
+
+
+
 
 
