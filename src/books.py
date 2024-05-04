@@ -52,13 +52,13 @@ def process_pdf(file, title, author, language, isbn):
 
 def fetch_all_for_user_id(user_id):
     sql = """SELECT id, title, user_id, filename, language, author, isbn, json
-            FROM books WHERE user_id=:user_id"""
+             FROM books WHERE user_id=:user_id"""
     result = db.session.execute(text(sql), {"user_id": user_id})
     return result.fetchall()
 
 def fetch_book_by_id(book_id):
     sql = """SELECT id, title, user_id, filename, language, author, isbn, json
-            FROM books WHERE id=:id"""
+             FROM books WHERE id=:id"""
     result = db.session.execute(text(sql), {"id": book_id})
     if result:
         return result.fetchone()
