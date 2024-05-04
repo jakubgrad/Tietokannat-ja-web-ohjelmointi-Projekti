@@ -6,7 +6,7 @@ def check_id_validity(pair_id, user_id):
     try:
         print(pair_id, type(pair_id))
         print(user_id, type(user_id))
-        sql = "SELECT * FROM pairs WHERE id=:pair_id AND user_id=:user_id;"
+        sql = "SELECT id FROM pairs WHERE id=:pair_id AND user_id=:user_id;"
         result = db.session.execute(text(sql), {"pair_id":pair_id, "user_id":user_id})
         db.session.commit()
         pair = result.fetchone()
@@ -20,7 +20,7 @@ def check_id_validity(pair_id, user_id):
 def create_new_pair(name, user_id, book1_id, book2_id):
     try:
         sql = """INSERT INTO pairs (name, user_id, book1_id, book2_id)
-              VALUES (:name, :user_id, :book1_id, :book2_id);"""
+                 VALUES (:name, :user_id, :book1_id, :book2_id);"""
         db.session.execute(text(sql), {"name":name, "user_id":user_id,
             "book1_id":book1_id,"book2_id":book2_id})
         db.session.commit()
@@ -48,7 +48,7 @@ def find_pair_that_references_book_id(book_id):
     try:
         db.session.commit()
         sql = """SELECT id, user_id, name, book1_id, book2_id FROM pairs
-              WHERE book1_id=:book1_id OR book2_id=:book2_id;"""
+                 WHERE book1_id=:book1_id OR book2_id=:book2_id;"""
         result = db.session.execute(text(sql), {"book1_id":int(book_id),"book2_id":int(book_id)})
         db.session.commit()
         pair = result.fetchone()
