@@ -1,10 +1,8 @@
 {% if session.username %}
 {% extends "layout.html" %}
 {% block title %}Main page{% endblock %}
+{% block heading %}Books{% endblock %}
 {% block content %}
-<h2>View pairs</h2>
-
-
 
 <style>
     table {
@@ -23,36 +21,75 @@
     }
 </style>
 
-<p>Hi {{ session.username }}, here are the pdfs you have uploaded :))</p>
-<p><a href="/upload"> Upload another one</a></p>
-<p><a href="/create_new_pair">Create a pair of pdfs for billingual reading</a></p>
-<table>
+
+{% set books_count = books|length %}
+{% if books_count > 0 %}
+
+<p>Hi {{ session.username }}, here are the books you have uploaded :))<br>
+
+
+<table class="table-sm table-striped">
+  <tr>
+    <th scope="col">ID</th>
+    <th scope="col">Title</th>
+    <th scope="col">Filename</th>
+    <th scope="col">Language</th>
+    <th scope="col">Author</th>
+    <th scope="col">ISBN</th>
+    <th scope="col">Delete</th>
+  </tr>
 
 {% for book in books %}
   <tr>
-    <th>ID</th>
-    <th>Title
-            </th>
-    <th>Filename</th>
-    <th>Language</th>
-    <th>Author</th>
-    <th>ISBN</th>
-  </tr>
-  <tr>
     <td>{{ book.id }}</td>
-    <td>{{ book.title }}
+    <td>{{ book.title }}</td>
+    <td>{{ book.filename if book.filename else "..." }}</td>
+    <td>{{ book.language if book.language else "..." }}</td>
+    <td>{{ book.author if book.author else "..."  }}</td>
+    <td>{{ book.isbn if book.isbn else "..."  }}</td>
+    <td>
         <form method="post" action="/delete_book/{{book.id}}">
             <input type="hidden" name="id" value={{book.id}}> 
             <button type="submit">Delete</button>
         </form>
     </td>
-    <td>{{ book.filename if book.filename else "..." }}</td>
-    <td>{{ book.language if book.language else "..." }}</td>
-    <td>{{ book.author if book.author else "..."  }}</td>
-    <td>{{ book.isbn if book.isbn else "..."  }}</td>
+
   </tr>
 {% endfor %}
 </table>
+
+<a href="/create_new_pair">Create a pair of pdfs for billingual reading</a></p><br>
+
+<p>You can also upload another book:</p>
+
+{% else %}
+<p>You have not uploaded any books yet. Use the form below!</p><br>
+
+{% endif %}
+
+<form action="/process_pdf" method="post" style="display: inline;" enctype="multipart/form-data">
+        <div class="form-group col-6">
+          <input type="file" name="pdf-file" class="form-control" id="inputFile" required>
+        </div>
+        <div class="form-group col-6">
+          <input type="title" class="form-control" id="inputTitle" style="padding:10px" rows="3" cols="40" name="title" placeholder="Title..." required>
+        </div>
+        <div class="form-group col-6">
+        <input type="author" class="form-control" name="author" placeholder="Author (optional)" id="inputAuthor" style="padding:10px" rows="3" cols="40"> </i>
+        </div>
+        <div class="form-group col-6">
+        <input type="language" class="form-control" id="inputLanguage" name="language" placeholder="Language (optional)" style="padding:10px" rows="3" cols="40"> 
+        </div>
+        <div class="form-group col-6">
+        <input type="isbn" name="isbn" id="inpuIsbn" class="form-control" placeholder="ISBN (optional)" style="padding:10px" rows="3" cols="40">
+        </div>
+
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+        <div class="form-group col-6">
+        <input type="submit" value="Upload!"><br>
+        </div>
+</form>
 
 {% endblock %}
 
