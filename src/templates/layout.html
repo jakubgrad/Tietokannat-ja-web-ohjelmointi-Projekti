@@ -1,9 +1,45 @@
 <!doctype html>
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
 <title>BiReader - {% block title %}{% endblock %}</title>
-<h1>BiReader</h1>
-<a href="/">Main page</a>
-<a href="/logout">Logout</a>
-<hr>
-{% block content %}{% endblock %}
-<hr>
- <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
+<div class="container">
+  <nav class="navbar navbar-expand-sm navbar-light">
+    <a class="navbar-brand" href="/">BiReader</a>
+        <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                <a class="nav-link" href="/view_uploads">Books</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/view_pairs">Pairs</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/create_new_pair">New pair</a>
+              </li>
+        </ul>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/logout">Logout</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="row">
+    <div class="col-8">
+            <h1>{% block heading %}{% endblock %}</h1>
+                {% block content %}{% endblock %}
+    </div>
+    <div class="col-4">
+      <h2>Quick bookmarks</h2>
+        <p align="center" class="text-justify">
+        Research has shown that reading books in multiple languages can enhance cognitive abilities, including problem-solving skills, creativity, and memory retention. <br><br>
+        </p>
+    </div>
+  </div>
+</div>
+
+
+
+    <footer style="flex-shrink: 0; background-color: rgba(0, 0, 0, 0.05); text-align: center; padding: 10px 0; width: 100%; position: fixed; bottom: 0;">
+        <div style="text-center;">
+            2024 Jakub Grad <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
+        </div>
+ 
