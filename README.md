@@ -100,6 +100,7 @@ It frees up both chrome and chromium.
 - I want to implement all the tables mentioned above
 - I want to host the application on my server
 - I want to get rid of the many try - except blocks in my code
+- create consistent style e.g. by using the same boostrap buttons everywhere
 
 [Peer review 1](https://github.com/Karri6/db-and-web-dev/issues/3)
 [Peer review 2](https://github.com/rautiais/tohoilykisa/issues/2)
