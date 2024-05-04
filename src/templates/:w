@@ -1,0 +1,26 @@
+{% extends "layout_logged_out.html" %}
+{% block title %}Log in{% endblock %}
+{% block heading %}Log in{% endblock %}
+{% block content %}
+
+
+{% if message_id==0 %}
+
+      <form action="/login" method="POST" style="display: inline;">
+        <div class="form-group col-6">
+          <input type="text" class="form-control" id="inputUsername" name="username" placeholder="Username..." rows="3" cols="40" required>
+        </div>
+        <div class="form-group col-6">
+          <input type="password" class="form-control" id="inputPassword" type="password" name="password" placeholder="Password..." rows="3" cols="40" required>
+        </div>
+        <div class="form-group col-6">
+          <button type="submit" value="Log in" class="btn btn-primary">Login</button>
+        </div>
+      </form>
+
+{% else %}
+Something went wrong. Either the user doesn't exist or the password is wrong.
+<a href="/login">Go back</a>
+{% endif %}
+
+{% endblock %}

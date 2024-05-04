@@ -1,0 +1,151 @@
+{% extends "layout.html" %}
+{% block title %}Main page{% endblock %}
+{% block content %}
+
+<h2>Reading page</h2>
+
+{% if session.username %}
+
+{#
+<p>{{ pair.name }}</p>
+<p>{{ book1.json if book1.json else 0  }}</p>
+<p>{{ book2.json if book2.json else 0}}</p>
+book1.json[1][1]
+<p>{{ book1.json[1][1] if book1.json[1][1] else 0}}</p>
+result:
+<p>{{ result if result else 0}}</p>
+
+#}
+{#
+[["This", "is", "an", "example", "file"]
+, ["", "Stuff", "is", "divided", "using", "the", "comma"], ["", "So", "this", "sentence", "should", "be", "in", "element", "numb
+er", "[2]", "if", "you", "count", "from", "0"], ["", "This", "sentence", "is", "fourth"], ["", "This", "sentence", "is", "fifth"
+], ["", "This", "sentence", "is", "sixth"], ["", "And", "this", "sentence", "is", "seventh"], [""]]
+#}
+
+<table border="1">
+  <tr>
+    <th style="text-align: left; width: 10px;" colspan="3" >
+        <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 + 3 if counter1 else 3 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 + 3 if counter2 else 3 }}">
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="Next paragraph">
+        </form>
+        <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 3 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 - 3 if counter2 else 0 }}">
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="Previous paragraph">
+        </form>
+        <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0}}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0}}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+            <input type="hidden" name="form_purpose" value="save_bookmark">
+            <input type="submit" value="Save bookmark">
+        </form>
+
+   </th>
+  </tr>
+  <tr style="height: 120px;">
+    <th style="text-align: right; width: 4px;">
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1+1 if counter1 else 1 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="+">
+        </form>
+    </th>
+    <th style="text-align: left;">
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="-">
+        </form>
+    </th>
+    <th style="text-align: left;">
+            {{ sentences1 if sentences1 else 0 }}<i> {{ counter1 if counter1 else 0}} - {{ counter1+2 if counter1 else 2}}</i>
+    </th>
+
+  <tr style="height: 120px;">
+    <th style="text-align: right; width: 4px;">
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1  if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2+1 if counter2 else 1 }}">
+
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="+">
+        </form>
+    </th>
+    <th style="text-align: left;">
+        <form action="/read_pair/{{ pair.id }}" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2-1 if counter2 else 0 }}">
+
+            <input type="hidden" name="form_purpose" value="update_counters">
+            <input type="submit" value="-">
+        </form>
+    </th>
+    <th style="text-align: left;">
+    {{ sentences2 if sentences2 else 0 }}<i> {{ counter2 if counter2 else 0}} - {{ counter2+2 if counter2 else 2}}
+    </th>
+  </tr>
+
+</table>
+<br>
+
+{% if bookmarks_of_pair  %}
+        <form action="/delete_all_bookmarks_of_pair/{{ pair.id }}" style="display: inline;" method="POST">
+            <input type="hidden" name="form_purpose" value="delete_all_bookmarks">
+            <input type="submit"  value="Delete all bookmarks">
+        </form>
+
+{% else %}
+No bookmarks yet
+{% endif %}
+<br>
+<br>
+
+{% for bookmark in bookmarks_of_pair %}
+
+<form action="/read_pair/{{ pair.id }}" style="display: inline;" method="POST">
+            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+            <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
+
+            <input type="hidden" name="form_purpose" value="load_bookmark">
+            <input type="submit"  value="Load bookmark">
+        </form>
+        <form action="/delete_bookmark/{{ bookmark.id }}" style="display: inline;" method="POST">
+                    <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
+                    <input type="hidden" name="form_purpose" value="delete_bookmark">
+                    <input type="submit" value="Delete bookmark">
+        </form>
+
+
+        <br>
+        Last read: {{ bookmark.last_read }} <br>
+        Created: {{ bookmark.created_at.strftime("%Y-%m-%d %H:%M:%S") }} <br>
+        Book 1 progression: {{ bookmark.counter1 }} <br>
+        Book 2 progression: {{ bookmark.counter2}} <br>
+        
+<hr>
+{% endfor %}
+
+
+{% else %}
+It appears you are not logged on.
+{% endif %}
+
+{% endblock %}

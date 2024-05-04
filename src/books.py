@@ -1,10 +1,11 @@
-from db import db
-import users
-from sqlalchemy import text
-from app import app, ALLOWED_EXTENSIONS
+import json
 import os
 from PyPDF2 import PdfReader
-import json
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+from app import app, ALLOWED_EXTENSIONS
+import users
+from db import db
 
 
 def allowed_file(filename):
@@ -13,13 +14,11 @@ def allowed_file(filename):
 
 
 def process_pdf(file, title, author, language, isbn):
-    filename = file.filename
     if file and allowed_file(file.filename):
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        reader = PdfReader("../uploads/"+filename)
-        number_of_pages = len(reader.pages)
-        page = reader.pages[0]
-        text_from_pdf = page.extract_text()
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], file.filename))
+        reader = PdfReader("../uploads/"+file.filename)
+        # pylint: disable=no-member
+        text_from_pdf = reader.pages[0].extract_text()
         print(f"text_from_pdf {text_from_pdf}")
         sentences = text_from_pdf.split(".")
         print(f"sentences {sentences}")
@@ -33,14 +32,17 @@ def process_pdf(file, title, author, language, isbn):
         print(f"result:{result}")
         json_array = json.dumps(result)
         print(f"json_array {json_array}")
-        print(f'Number of pages: {number_of_pages}, text: {text}')
+        print(f'text: {text}')
         try:
-            easy_json_array = {"title": "example glossary"}
-            sql = "INSERT INTO books (title, user_id, filename, language, author, isbn, json) VALUES (:title, :user_id, :filename, :language, :author, :isbn, :json);"
-            db.session.execute(text(sql), {"title": title, "user_id": users.user_id(
-            ), "filename": filename, "language": language, "author": author, "isbn": isbn, "json": json_array})
+            sql = """INSERT INTO books
+                     (title, user_id, filename, language, author, isbn, json)
+                     VALUES (:title, :user_id, :filename, :language, :author,
+                     :isbn, :json);"""
+            db.session.execute(text(sql), {"title": title, "user_id": users.user_id(),
+                "filename": file.filename, "language": language, "author": author, "isbn": isbn,
+                "json": json_array})
             db.session.commit()
-        except Exception as e:
+        except SQLAlchemyError as e:
             print(f"Error processing PDF: {e}")
             print("SQL insert query into books failed!")
             return True
@@ -49,26 +51,27 @@ def process_pdf(file, title, author, language, isbn):
 
 
 def fetch_all_for_user_id(user_id):
-    sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE user_id=:user_id"
+    sql = """SELECT id, title, user_id, filename, language, author, isbn, json
+            FROM books WHERE user_id=:user_id"""
     result = db.session.execute(text(sql), {"user_id": user_id})
     return result.fetchall()
 
-
-def fetch_book_by_id(id):
-    sql = f"SELECT id, title, user_id, filename, language, author, isbn, json FROM books WHERE id=:id"
-    result = db.session.execute(text(sql), {"id": id})
+def fetch_book_by_id(book_id):
+    sql = """SELECT id, title, user_id, filename, language, author, isbn, json
+            FROM books WHERE id=:id"""
+    result = db.session.execute(text(sql), {"id": book_id})
     if result:
         return result.fetchone()
     return False
 
 
-def delete_book_by_id(id):
+def delete_book_by_id(book_id):
     sql = "DELETE FROM books WHERE id=:id;"
     try:
-        db.session.execute(text(sql), {"id": id})
+        db.session.execute(text(sql), {"id": book_id})
         db.session.commit()
-    except:
-        print("deleting failed, perhaps because book doesn't exist")
+    except SQLAlchemyError as e:
+        print(f"Error: {e}")
         return False
 
     if fetch_book_by_id(id):

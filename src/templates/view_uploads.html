@@ -32,7 +32,6 @@
   <tr>
     <th scope="col">ID</th>
     <th scope="col">Title</th>
-    <th scope="col">Filename</th>
     <th scope="col">Language</th>
     <th scope="col">Author</th>
     <th scope="col">ISBN</th>
@@ -43,7 +42,6 @@
   <tr>
     <td>{{ book.id }}</td>
     <td>{{ book.title }}</td>
-    <td>{{ book.filename if book.filename else "..." }}</td>
     <td>{{ book.language if book.language else "..." }}</td>
     <td>{{ book.author if book.author else "..."  }}</td>
     <td>{{ book.isbn if book.isbn else "..."  }}</td>
@@ -90,6 +88,18 @@
         <input type="submit" value="Upload!"><br>
         </div>
 </form>
+
+{% if errors %}
+{% for error in errors %}
+<p style="color: red;">{{ error }}</p>
+{% endfor %}
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+<p style="color: green;">{{ message }}</p>
+{% endfor %}
+{% endif %}
 
 {% endblock %}
 
