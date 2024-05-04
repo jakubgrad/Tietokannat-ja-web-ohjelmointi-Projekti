@@ -3,7 +3,7 @@ import users, books, pairs, bookmarks
 from PyPDF2 import PdfReader
 import os
 from app import app, ALLOWED_EXTENSIONS
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, url_for
 
 @app.route("/")
 def index():
@@ -21,6 +21,7 @@ def new():
 
 @app.route("/create_new_pair",methods=["GET","POST"])
 def create_new_pair(): 
+    errors = []
     if request.method == "GET":
         if users.user_id()!=0:
             return render_template("create_new_pair.html", books = books.fetch_all_for_user_id(users.user_id()))
@@ -35,7 +36,8 @@ def create_new_pair():
             if id:
                 return redirect("/read_pair/"+str(id))
             else:
-                return render_template("error.html", message="Couldn't view the pair immediately")
+                errors.append("Couldn't create or view the pair")
+                return render_template("view_pairs.html", errors=errors)
     
 @app.route("/view_pairs",methods=["GET","POST"])
 def view_pairs(): 
@@ -47,15 +49,22 @@ def view_pairs():
 
 @app.route("/login",methods=["GET","POST"])
 def login():
+    if users.user_id():
+        return redirect(url_for("index"))
     if request.method == "GET":
-        return render_template("login.html", message_id=0)
+        return render_template("login.html")
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        errors = []
+        if len(password) == 0:
+            errors.append("No password given")
+        if len(username) == 0:
+            errors.append("No username given")
         if users.login(username, password):
             return redirect("/")
-        else:
-            return render_template("login.html", message_id=1)
+        errors.append("Failed to log in. Perhaps wrong username?")
+        return render_template("login.html", errors=errors, username=username,password=password)
 
 @app.route("/logout")
 def logout():
@@ -66,30 +75,31 @@ def logout():
 def result():
     return render_template("result.html", name=request.form["name"])
 
-@app.route("/send", methods=["POST"])
-def send():
-    content = request.form["content"]
-    if messages.send(content):
-        return redirect("/")
-    else:
-        return render_template("error.html", message="Viestin lähetys ei onnistunut")
-
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if users.user_id():
+        return redirect(url_for("index"))
     if request.method == "GET":
         return render_template("register.html")
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        if len(username) > 100:
-            return render_template("error.html", error="Too long username")
-        if len(password) > 5000:
-            return render_template("error.html", error="Too long password")
-
+        errors = []
+        if len(username) > 15:
+            errors.append("Too long username")
+        if len(password) > 50:
+            errors.append("Too long password")
+        if len(password) == 0:
+            errors.append("No password given")
+        if len(username) == 0:
+            errors.append("No username given")
+        if errors:
+            return render_template("register.html", errors=errors, username=username,password=password)
         if users.register(username, password):
             return redirect("/")
         else:
-            return render_template("error.html", error="Registration failed. Possibly the username is already taken.")
+            errors.append("Registration failed. Possibly the username is already taken.")
+            return render_template("register.html", errors=errors, username=username,password=password)
 
 @app.route("/upload")
 def upload():
@@ -101,66 +111,89 @@ def view_uploads():
 
 @app.route("/delete_book/<int:id>", methods=['GET', 'POST'])
 def delete_book(id):
+    errors=[]
     if request.method == 'GET':
-        return render_template("error.html", message="Delete API")
+        return redirect(url_for("view_uploads"))
     if request.method == 'POST':
         if books.delete_book_by_id(id):
-            return render_template("error.html", message ="Successfully deleted the book. To see this change, you need to go back and reload the page.")
+            return redirect(url_for("view_uploads"))
         else:
             pair = pairs.find_pair_that_references_book_id(id)
             if pair:
                 return render_template("delete_entity.html", entity=pair, name="pair", message =f"To delete this book you also need to delete this pair.")
             else:
-                return render_template("error.html", message =f"Failed to delete book {id}, sorry.") 
+                errors.append(f"Failed to delete book {id}, sorry.")
+                return render_template("view_pairs.html", pairs = pairs.fetch_all_for_user_id(users.user_id()),  errors=errors) 
 
 @app.route("/delete_pair/<int:id>", methods=['GET', 'POST'])
 def delete_pair(id):
+    messages = []
+    errors = []
     if request.method == 'GET':
-        return render_template("error.html", message="Delete API")
+        return redirect(url_for("view_pairs"))
     if request.method == 'POST':
         bookmarks.delete_all_bookmarks_of_pair_by_pair_id(id)
         if pairs.delete_pair_by_id(id):
-            return render_template("error.html", message =f"Successfully deleted pair of id {id}. To see this change, you need to go back and reload the page.")
-        return render_template("error.html", message =f"Failed to delete pair {id}") 
+            messages.append(f"Successfully deleted pair of id {id}.")
+            return render_template("view_pairs.html", pairs = pairs.fetch_all_for_user_id(users.user_id()),  messages=messages) 
+
+        errors.append(f"Couldn't delete pair of id {id}.")
+        return render_template("view_pairs.html",pairs = pairs.fetch_all_for_user_id(users.user_id()), errors=errors)
 
 @app.route("/delete_bookmark/<int:id>", methods=['GET', 'POST'])
 def delete_bookmark(id):
+    errors=[]
+    bookmark = bookmarks.fetch_bookmark_by_id(id)
+    pair_id = bookmark[1]
+
     if request.method == 'GET':
-        return render_template("error.html", message="Delete API")
+        return redirect(url_for("read_pair", pair_id=pair_id))
     if request.method == 'POST':
         if bookmarks.delete_bookmark_by_id(id):
-            return render_template("error.html", message ="Successfully deleted bookmark. To see this change, you need to go back and reload the page.")
-        return render_template("error.html", message =f"Failed to delete bookmark {id}") 
+            return redirect(url_for("read_pair", pair_id=pair_id))
+        errors.append(f"Failed to delete bookmark {id}")
+        return redirect(url_for("read_pair", pair_id=pair_id, errors=errors))
 
 @app.route("/delete_all_bookmarks_of_pair/<int:id>", methods=['GET', 'POST'])
 def delete_all_bookmarks_of_pair(id):
+    errors=[]
+    bookmark = bookmarks.fetch_bookmark_by_id(id)
+
     if request.method == 'GET':
-        return render_template("error.html", message="Delete API")
+        return redirect(url_for("read_pair", pair_id=id))
     if request.method == 'POST':
         if bookmarks.delete_all_bookmarks_of_pair_by_pair_id(id):
-            return render_template("error.html", message ="Successfully deleted all bookmarks. To see this change, you need to go back and reload the page.")
-        return render_template("error.html", message =f"Failed to delete bookmark {id}") 
-
+            return redirect(url_for("read_pair", pair_id=id))
+        errors.append(f"Failed to delete bookmark {id}")
+        return redirect(url_for("read_pair", pair_id=id, errors=errors))
 
 @app.route("/process_pdf", methods=['GET', 'POST'])
 def process_pdf():
+    errors = []
     if request.method == 'POST':
         if users.user_session() != request.form["csrf_token"]:
-            return render_template("error.html", message="CSRF attack detected")
+            errors.append("CSRF attack detected")
+            return redirect(url_for("view_uploads", errors=errors))
         # check if the post request has the file part
         if 'pdf-file' not in request.files:
-            return redirect("/upload")
+            errors.append("No file attached")
+            return redirect(url_for("view_uploads", errors=errors))
         file = request.files['pdf-file']
         if file.filename == '':
-            return redirect(request.url)
+            errors.append("File doesn't have a name")
+            return redirect(url_for("view_uploads", errors=errors))
         title = request.form["title"]
         author = request.form["author"]
         language = request.form["language"]
         isbn = request.form["isbn"]
+        if not title:
+            errors.append("No title")
+            return redirect(url_for("view_uploads", errors=errors))
+        return redirect(url_for("view_uploads", errors=errors))
         if books.process_pdf(file, title, author, language, isbn):
             return redirect("/view_uploads")
-        else:
-            return render_template("error.html", message="Error in processing the PDF")
+        errors.append("Error in processing your file, sorry!")
+        return redirect(url_for("view_uploads", errors=errors))
 
     return redirect("/")
             
@@ -168,9 +201,11 @@ def process_pdf():
 
 @app.route("/read_pair/<int:pair_id>",methods=["GET","POST"])
 def read_pair(pair_id): 
+    errors = []
     if request.method == "GET":
         if not pairs.check_id_validity(pair_id,users.user_id()):
-            return render_template("error.html", message="Pair not available")
+            errors.append("Pair not available")
+            return redirect(url_for("view_uploads", errors=errors))
         pair = pairs.fetch_pair_by_id(pair_id)
         book1 = books.fetch_book_by_id(pair.book1_id)
         book2 = books.fetch_book_by_id(pair.book2_id)
@@ -187,7 +222,8 @@ def read_pair(pair_id):
 
     if request.method == "POST":
         if not pairs.check_id_validity(pair_id,users.user_id()):
-            return render_template("error.html", message="Pair not available")
+            errors.append("Pair not available")
+            return redirect(url_for("view_uploads", errors=errors))
 
         counter = int(request.form["counter"])
         counter1 = int(request.form["counter1"])
