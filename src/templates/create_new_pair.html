@@ -17,6 +17,9 @@ Use this form to create a new pair of books for billingual reading
 <div class="form-group col-6">
 <input name="book2_id" class="form-control" placeholder="ID of book 2 from the below list..." rows="3" cols="40"></input>
 </div>
+
+<input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
 <div class="form-group col-6">
   <button type="submit" value="Create a new pair!" class="btn btn-primary">Create a new pair!</button>
 </div>
