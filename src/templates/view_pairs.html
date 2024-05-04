@@ -23,39 +23,57 @@
     }
 </style>
 
+{% set pairs_count = pairs|length %}
+{% if pairs_count > 0 %}
+
 <p>Hi {{ session.username }}, here are the pairs of pdfs you have uploaded :))</p>
-<table>
+<table class="table table-sm  table-striped">
    <tr>
-    <th>ID</th>
-    <th>Name</th>
-    <th>Book1_id</th>
-    <th>Book2_id</th>
-    <th>Title</th>
-    <th>Filename</th>
-    <th>Language</th>
-    <th>Author</th>
-    <th>ISBN</th>
+    <th scope="col">ID</th>
+    <th scope="col">Name</th>
+    <th scope="col">Title</th>
+    <th scope="col">Language</th>
+    <th scope="col">Author</th>
+    <th scope="col">ISBN</th>
+    <th scope="col">Delete</th>
   </tr>
 
 {% for pair in pairs %}
     <tr>
-    <td>{{ pair.id }}</td>
-    <td><a href="/read_pair/{{pair.id}}"> {{ pair.name }}</a>
+    <td scope="row">{{ pair.id }}</td>
+    <td scope="row"><a href="/read_pair/{{pair.id}}"> {{ pair.name }}</a>
+    </td>
+    <td scope="row"></td>
+    <td scope="row"></td>
+    <td scope="row"></td>
+    <td scope="row"></td>
+    <td scope="row">
         <form method="post" action="/delete_pair/{{pair.id}}">
             <input type="hidden" name="id" value={{pair.id}}> 
             <button type="submit">Delete</button>
         </form>
     </td>
-    <td>{{ pair.book1_id }}</td>
-    <td>{{ pair.book2_id }}</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td>/td>
   </tr>
 {% endfor %}
 </table>
+
+
+{% else %}
+You have not created any pairs yet.
+{% endif %}
+
+
+{% if errors %}
+{% for error in errors %}
+<p style="color: red;">{{ error }}</p>
+{% endfor %}
+{% endif %}
+
+{% if messages %}
+{% for message in messages %}
+<p style="color: green;">{{ message }}</p>
+{% endfor %}
+{% endif %}
 
 {% endblock %}
 
