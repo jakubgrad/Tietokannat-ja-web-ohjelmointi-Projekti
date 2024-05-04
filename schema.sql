@@ -1,3 +1,9 @@
+DROP TABLE IF EXISTS bookmarks;
+DROP TABLE IF EXISTS pairs;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS messages;
+
 CREATE TABLE messages (id SERIAL PRIMARY KEY, content TEXT);
 CREATE TABLE users (id SERIAL PRIMARY KEY, username TEXT, password TEXT);
 CREATE TABLE books (id SERIAL PRIMARY KEY, title TEXT, user_id INTEGER REFERENCES users, filename TEXT, language TEXT, author TEXT, isbn TEXT, json JSONB);
