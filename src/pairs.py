@@ -90,5 +90,5 @@ def validate_and_fix_counter(counter, book):
     sentence_length = 3
     max_counter = len(book.json)-sentence_length
     counter = min(counter, max_counter)
-    counter = min(counter, 0)
+    counter = max(counter, 0)
     return counter
