@@ -83,6 +83,11 @@ Because of the nature of pdf parsing, the application will reject a lot of pdfs 
 - click on `Upload a pdf`
 - In the file explorer window click on home, find the `Tietokannat-ja-web-ohjelmointi-Projekti`, go to examples and *voila*, there is J.K Rowling's Half Blood Prince in English and Finnish. Upload the files one after the other. Then, click on `Create a pair of pdfs for billingual reading`, name the pair, select ids 1 and 2 and `Create a new pair!`. You can read right away. `Next paragraph` and `Previous paragraph` move both of the books back and forth 3 sentences by default. `+` and `-` move either of the books by one sentence, so that whenver the two versions have different number of sentences, you can keep reading.
 
+# Useful commands
+See linting report:
+```
+pylint src/*.py
+```
 # Troubleshooting
 I found that frequently launching and closing university VMs confused web browsers. For a quick fix when none of your browsers want to open, run:
 ```
