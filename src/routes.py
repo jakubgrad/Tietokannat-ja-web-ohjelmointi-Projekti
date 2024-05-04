@@ -226,7 +226,6 @@ def read_pair(pair_id):
         counter = int(request.form["counter"])
         counter1 = int(request.form["counter1"])
         counter2 = int(request.form["counter2"])
-        counter2 = int(request.form["counter2"])
 
         pair = pairs.fetch_pair_by_id(pair_id)
         book1 = books.fetch_book_by_id(pair.book1_id)
@@ -234,9 +233,7 @@ def read_pair(pair_id):
 
         counter1 = pairs.validate_and_fix_counter(counter1, book1)
         counter2 = pairs.validate_and_fix_counter(counter2, book2)
-        #delete_bookmark
-        #load_bookmark
-        #update_counters
+
         if request.form["form_purpose"] == "save_bookmark":
             print("saving bookmark success:",bookmarks.save_bookmark(pair_id, counter1, counter2))
             return redirect("/read_pair/"+str(pair_id))
@@ -248,6 +245,7 @@ def read_pair(pair_id):
             if selected_bookmark:
                 counter1 = selected_bookmark.counter1
                 counter2 = selected_bookmark.counter2
+
         bookmarks_of_pair = bookmarks.fetch_bookmarks_by_pair_id(pair_id)
 
         sentences1 = pairs.produce_sentences(book1, counter1)
