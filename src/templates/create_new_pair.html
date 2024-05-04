@@ -5,16 +5,21 @@
 <h2>Create new pair</h2>
 
 Use this form to create a new pair of books for billingual reading
-<form action="/create_new_pair" method="POST">
-Create new pair! <br>
-<input name="name" placeholder="Name the pair"></input><br>
 
-<input name="book1_id" placeholder="ID of book 1 from the below list..."></input><br>
+<form action="/create_new_pair" method="POST" style="display: inline;">
 
-<input name="book2_id" placeholder="ID of book 2 from the below list..."></input><br>
-
-<br>
-<input type="submit" value="Create a new pair!">
+<div class="form-group col-6">
+<input name="name" class="form-control" placeholder="Name of the pair..." rows="3" cols="40" required></input>
+</div>
+<div class="form-group col-6">
+<input name="book1_id" class="form-control" placeholder="ID of book 1 from the below list..." rows="3" cols="40"></input>
+</div>
+<div class="form-group col-6">
+<input name="book2_id" class="form-control" placeholder="ID of book 2 from the below list..." rows="3" cols="40"></input>
+</div>
+<div class="form-group col-6">
+  <button type="submit" value="Create a new pair!" class="btn btn-primary">Create a new pair!</button>
+</div>
 </form>
 
 
@@ -38,19 +43,20 @@ Create new pair! <br>
 <p>Here are the pdfs you have uploaded :))</p>
 <table>
 
-{% for book in books %}
   <tr>
     <th>ID</th>
     <th>Title</th>
-    <th>Filename</th>
+    {# <th>Filename</th> #}
     <th>Language</th>
     <th>Author</th>
     <th>ISBN</th>
   </tr>
+
+{% for book in books %}
   <tr>
     <td>{{ book.id }}</td>
     <td>{{ book.title }}</td>
-    <td>{{ book.filename }}</td>
+    {# <td>{{ book.filename }}</td> #}
     <td>{{ book.language }}</td>
     <td>{{ book.author }}</td>
     <td>{{ book.isbn }}</td>
