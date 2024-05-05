@@ -7,29 +7,30 @@ from app import app
 
 def prevent_csrf():
     if users.user_session() != request.form["csrf_token"]:
-        errors.append("CSRF attack detected")
+        # pylint: disable=undefined-variable
+        abort(403)
 
 def fetch_quick_bookmarks():
     return bookmarks.fetch_quick_bookmarks(users.user_id())
 
 @app.route("/")
 def index():
-    bookmarks = fetch_quick_bookmarks()
-    return render_template("index.html", bookmarks=bookmarks)
+    quick_bookmarks = fetch_quick_bookmarks()
+    return render_template("index.html", quick_bookmarks=quick_bookmarks)
 
 @app.route("/create_new_pair",methods=["GET","POST"])
 def create_new_pair():
-    bookmarks = fetch_quick_bookmarks()
+    quick_bookmarks = fetch_quick_bookmarks()
     errors = []
     if request.method == "GET":
         if users.user_id()!=0:
             return render_template("create_new_pair.html",
                 books = books.fetch_all_for_user_id(users.user_id()),
-                bookmarks=bookmarks)
+                quick_bookmarks=quick_bookmarks)
         return redirect("/")
     if request.method == "POST":
         prevent_csrf()
-        bookmarks = fetch_quick_bookmarks()
+        quick_bookmarks = fetch_quick_bookmarks()
         name = request.form["name"]
         book1_id = request.form["book1_id"]
         book2_id = request.form["book2_id"]
@@ -38,22 +39,22 @@ def create_new_pair():
             if pair_id:
                 return redirect("/read_pair/"+str(pair_id))
             errors.append("Couldn't create or view the pair")
-            return render_template("view_pairs.html", errors=errors, bookmarks=bookmarks)
+            return render_template("view_pairs.html", errors=errors,
+                quick_bookmarks=quick_bookmarks)
 
-    return render_template("view_pairs.html", errors=errors, bookmarks=bookmarks)
+    return render_template("view_pairs.html", errors=errors, quick_bookmarks=quick_bookmarks)
 
 @app.route("/view_pairs",methods=["GET"])
 def view_pairs():
-    bookmarks = fetch_quick_bookmarks()
+    quick_bookmarks = fetch_quick_bookmarks()
     if users.user_id()!=0:
         return render_template("view_pairs.html",
             pairs = pairs.fetch_all_for_user_id(users.user_id()),
-            bookmarks=bookmarks)
+            quick_bookmarks=quick_bookmarks)
     return redirect("/")
 
 @app.route("/login",methods=["GET","POST"])
 def login():
-    bookmarks = fetch_quick_bookmarks()
     if users.user_id():
         return redirect(url_for("index"))
     if request.method == "GET":
@@ -78,7 +79,6 @@ def logout():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    bookmarks = fetch_quick_bookmarks()
     if users.user_id():
         return redirect(url_for("index"))
     if request.method == "GET":
@@ -106,14 +106,14 @@ def register():
 
 @app.route("/view_uploads")
 def view_uploads():
-    bookmarks = fetch_quick_bookmarks()
+    quick_bookmarks = fetch_quick_bookmarks()
     return render_template("view_uploads.html",
         books = books.fetch_all_for_user_id(users.user_id()),
-        bookmarks=bookmarks)
+        quick_bookmarks=quick_bookmarks)
 
 @app.route("/delete_book/<int:book_id>", methods=['GET', 'POST'])
 def delete_book(book_id):
-    bookmarks = fetch_quick_bookmarks()
+    quick_bookmarks = fetch_quick_bookmarks()
     errors = []
     if request.method == 'GET':
         return redirect(url_for("view_uploads"))
@@ -124,15 +124,15 @@ def delete_book(book_id):
         if pair:
             return render_template("delete_entity.html", entity=pair, name="pair",
                 message ="To delete this book you also need to delete this pair.",
-                bookmarks=bookmarks)
+                quick_bookmarks=quick_bookmarks)
     errors.append(f"Failed to delete book {book_id}, sorry.")
     return render_template("view_pairs.html",
         pairs = pairs.fetch_all_for_user_id(users.user_id()),  errors=errors,
-        bookmarks=bookmarks)
+        quick_bookmarks=quick_bookmarks)
 
 @app.route("/delete_pair/<int:pair_id>", methods=['GET', 'POST'])
 def delete_pair(pair_id):
-    bookmarks = fetch_quick_bookmarks()
+    quick_bookmarks = fetch_quick_bookmarks()
     messages = []
     errors = []
     if request.method == 'GET':
@@ -143,12 +143,12 @@ def delete_pair(pair_id):
             messages.append(f"Successfully deleted pair of id {pair_id}.")
             return render_template("view_pairs.html",
                 pairs = pairs.fetch_all_for_user_id(users.user_id()),
-                messages=messages, bookmarks=bookmarks)
+                messages=messages, quick_bookmarks=quick_bookmarks)
     errors.append(f"Couldn't delete pair of id {pair_id}.")
     return render_template("view_pairs.html",
         pairs = pairs.fetch_all_for_user_id(users.user_id()))
 
-@app.route("/delete_bookmark/<int:pair_id>", methods=['GET', 'POST'])
+@app.route("/delete_bookmark/<int:bookmark_id>", methods=['GET', 'POST'])
 def delete_bookmark(bookmark_id):
     errors = []
     bookmark = bookmarks.fetch_bookmark_by_id(bookmark_id)
@@ -157,9 +157,8 @@ def delete_bookmark(bookmark_id):
     if request.method == 'GET':
         return redirect(url_for("read_pair", pair_id=pair_id))
     if request.method == 'POST':
-        if bookmarks.delete_bookmark_by_id(bookmark_id):
-            return redirect(url_for("read_pair", pair_id=pair_id))
-    errors.append(f"Failed to delete bookmark {id}")
+        if not bookmarks.delete_bookmark_by_id(bookmark_id):
+            errors.append(f"Failed to delete bookmark {id}")
     return redirect(url_for("read_pair", pair_id=pair_id, errors=errors))
 
 @app.route("/delete_all_bookmarks_of_pair/<int:pair_id>", methods=['GET', 'POST'])
@@ -215,7 +214,7 @@ def read_pair(pair_id):
         sentences1 = pairs.produce_sentences(book1, counter1)
         sentences2 = pairs.produce_sentences(book2, counter2)
         return render_template("read_pair.html",
-            pair=pair, book1=book1, book2=book2, result=result,
+            pair=pair, book1=book1, book2=book2,
             sentences1=sentences1,sentences2=sentences2, counter1=counter1,
             counter2=counter2, bookmarks_of_pair=bookmarks_of_pair)
 
@@ -225,7 +224,7 @@ def read_pair(pair_id):
             errors.append("Pair not available")
             return redirect(url_for("view_pairs", errors=errors))
 
-        counter = int(request.form["counter"]) 
+        counter = int(request.form["counter"])
         counter1 = int(request.form["counter1"])
         counter2 = int(request.form["counter2"])
 
@@ -254,7 +253,7 @@ def read_pair(pair_id):
         sentences2 = pairs.produce_sentences(book2, counter2)
 
         return render_template("read_pair.html", pair=pair, book1=book1,
-            book2=book2, counter=counter, result=result,
+            book2=book2, counter=counter,
             sentences1=sentences1,sentences2=sentences2, counter1=counter1,
             counter2=counter2, bookmarks_of_pair=bookmarks_of_pair)
 
