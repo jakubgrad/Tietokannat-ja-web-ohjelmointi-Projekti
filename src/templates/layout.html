@@ -39,16 +39,16 @@
                 {% endif %}
                 <p align="center" class="text-justify">
                 {% if bookmarks %}
-                    {% for bookmark in bookmarks %}
+                    {% for quick_bookmark in bookmarks %}
                         <p>
-                            <form action="/read_pair/{{ bookmark[0] }}" style="display: inline;" method="POST">
+                            <form action="/read_pair/{{ quick_bookmark[0] }}" style="display: inline;" method="POST">
                                 <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
                                 <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
                                 <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
-                                <input type="number" style="display: none;" name="bookmark_id" value={{bookmark[1]}}>
+                                <input type="number" style="display: none;" name="bookmark_id" value={{quick_bookmark[1]}}>
                                 <input type="hidden" name="form_purpose" value="load_bookmark">
                                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                                <button type="submit" style="border: none; background: none; color: blue; cursor: pointer;">{{ bookmark[5] }}</button>
+                                <button type="submit" style="border: none; background: none; color: blue; cursor: pointer;">{{ quick_bookmark[5] }}</button>
                             </form>
                         </p>
                     {% endfor %}
