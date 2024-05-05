@@ -46,7 +46,7 @@
                         <form method="post" action="/delete_book/{{book.id}}">
                             <input type="hidden" name="id" value={{book.id}}> 
                             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                            <button type="submit">Delete</button>
+                            <button class="btn btn-sm btn-danger" type="submit">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -81,7 +81,7 @@
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
         <div class="form-group col-6">
-            <input type="submit" value="Upload!"><br>
+            <input type="submit" class="btn btn-primary" value="Upload!"><br>
         </div>
     </form>
 
