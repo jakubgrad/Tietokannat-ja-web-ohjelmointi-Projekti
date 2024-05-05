@@ -3,21 +3,18 @@ from sqlalchemy.exc import SQLAlchemyError
 from db import db
 
 def fetch_quick_bookmarks(user_id):
-    bookmarks = []
-    bookmakrs.append(fetch_last_read_bookmark())
     try:
         db.session.commit()
-        sql = """SELECT pair_id,counter1,counter2,name 
-                 FROM bookmarks 
-                 INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
-                 WHERE pair_id IN 
-                    ( SELECT id FROM pairs WHERE user_id=:user_id ) 
-                 ORDER BY last_read DESC LIMIT 3;"""
-
+        sql = """SELECT * FROM ( 
+                     SELECT DISTINCT ON (pair_id) pair_id,bookmarks.id,counter1,counter2,last_read,name 
+                     FROM bookmarks INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
+                     WHERE pair_id IN ( 
+                         SELECT id FROM pairs WHERE user_id=2) 
+                     ) 
+                  ORDER BY last_read DESC;"""
 
         result = db.session.execute(text(sql), {"user_id":user_id})
-        bookmarks.append(result.fetchone())
-        return bookmarks
+        return result.fetchall()
     except SQLAlchemyError as e:
         print(f"Error for selecting bookmarks: {e}")
         return False
