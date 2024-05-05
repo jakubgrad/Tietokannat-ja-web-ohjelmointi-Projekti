@@ -1,87 +1,74 @@
 {% if session.username %}
-{% extends "layout.html" %}
-{% block title %}Main page{% endblock %}
-{% block content %}
-<h2>View pairs</h2>
+    {% extends "layout.html" %}
+    {% block title %}Main page{% endblock %}
+    {% block content %}
+        <h2>View pairs</h2>
 
+        <style>
+            table {
+                border-collapse: collapse;
+                width: 100%;
+            }
 
+            th, td {
+                border: 1px solid black;
+                padding: 8px;
+                text-align: left;
+            }
 
-<style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
+            tr.border-bottom td {
+                border-bottom: 2px solid black;
+            }
+        </style>
 
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: left;
-    }
+        {% set pairs_count = pairs|length %}
+        {% if pairs_count > 0 %}
+            <p>Hi {{ session.username }}, here are the pairs of pdfs you have uploaded :))</p>
+            <table class="table-sm  table-striped">
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Language</th>
+                    <th scope="col">Author</th>
+                    <th scope="col">ISBN</th>
+                    <th scope="col">Delete</th>
+                </tr>
 
-    tr.border-bottom td {
-      border-bottom: 2px solid black;
-    }
-</style>
+                {% for pair in pairs %}
+                    <tr>
+                        <td scope="row">{{ pair.id }}</td>
+                        <td scope="row"><a href="/read_pair/{{pair.id}}"> {{ pair.name }}</a></td>
+                        <td scope="row"></td>
+                        <td scope="row"></td>
+                        <td scope="row"></td>
+                        <td scope="row"></td>
+                        <td scope="row">
+                            <form method="post" action="/delete_pair/{{pair.id}}">
+                                <input type="hidden" name="id" value={{pair.id}}>
+                                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                                <button type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            You have not created any pairs yet.
+        {% endif %}
 
-{% set pairs_count = pairs|length %}
-{% if pairs_count > 0 %}
+        {% if errors %}
+            {% for error in errors %}
+                <p style="color: red;">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
 
-<p>Hi {{ session.username }}, here are the pairs of pdfs you have uploaded :))</p>
-<table class="table table-sm  table-striped">
-   <tr>
-    <th scope="col">ID</th>
-    <th scope="col">Name</th>
-    <th scope="col">Title</th>
-    <th scope="col">Language</th>
-    <th scope="col">Author</th>
-    <th scope="col">ISBN</th>
-    <th scope="col">Delete</th>
-  </tr>
-
-{% for pair in pairs %}
-    <tr>
-    <td scope="row">{{ pair.id }}</td>
-    <td scope="row"><a href="/read_pair/{{pair.id}}"> {{ pair.name }}</a>
-    </td>
-    <td scope="row"></td>
-    <td scope="row"></td>
-    <td scope="row"></td>
-    <td scope="row"></td>
-    <td scope="row">
-        <form method="post" action="/delete_pair/{{pair.id}}">
-            <input type="hidden" name="id" value={{pair.id}}> 
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <button type="submit">Delete</button>
-        </form>
-    </td>
-  </tr>
-{% endfor %}
-</table>
-
-
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+    {% endblock %}
 {% else %}
-You have not created any pairs yet.
+    It appears you are not logged on.
 {% endif %}
-
-
-{% if errors %}
-{% for error in errors %}
-<p style="color: red;">{{ error }}</p>
-{% endfor %}
-{% endif %}
-
-{% if messages %}
-{% for message in messages %}
-<p style="color: green;">{{ message }}</p>
-{% endfor %}
-{% endif %}
-
-{% endblock %}
-
-{% else %}
-It appears you are not logged on.
-{% endif %}
-
-
-
-

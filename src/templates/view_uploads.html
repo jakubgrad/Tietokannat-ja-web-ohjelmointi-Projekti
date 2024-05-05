@@ -1,113 +1,104 @@
 {% if session.username %}
-{% extends "layout.html" %}
-{% block title %}Main page{% endblock %}
-{% block heading %}Books{% endblock %}
-{% block content %}
+    {% extends "layout.html" %}
+    {% block title %}Main page{% endblock %}
+    {% block heading %}Books{% endblock %}
+    {% block content %}
 
-<style>
-    table {
-      border-collapse: collapse;
-      width: 100%;
-    }
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
 
-    th, td {
-      border: 1px solid black;
-      padding: 8px;
-      text-align: left;
-    }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
 
-    tr.border-bottom td {
-      border-bottom: 2px solid black;
-    }
-</style>
+        tr.border-bottom td {
+            border-bottom: 2px solid black;
+        }
+    </style>
 
+    {% set books_count = books|length %}
+    {% if books_count > 0 %}
+        <p>Hi {{ session.username }}, here are the books you have uploaded :))<br>
 
-{% set books_count = books|length %}
-{% if books_count > 0 %}
+        <table class="table-sm table-striped">
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Title</th>
+                <th scope="col">Language</th>
+                <th scope="col">Author</th>
+                <th scope="col">ISBN</th>
+                <th scope="col">Delete</th>
+            </tr>
 
-<p>Hi {{ session.username }}, here are the books you have uploaded :))<br>
+            {% for book in books %}
+                <tr>
+                    <td>{{ book.id }}</td>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.language if book.language else "..." }}</td>
+                    <td>{{ book.author if book.author else "..."  }}</td>
+                    <td>{{ book.isbn if book.isbn else "..."  }}</td>
+                    <td>
+                        <form method="post" action="/delete_book/{{book.id}}">
+                            <input type="hidden" name="id" value={{book.id}}> 
+                            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                            <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
 
+        <a href="/create_new_pair">Create a pair of pdfs for billingual reading</a></p><br>
 
-<table class="table-sm table-striped">
-  <tr>
-    <th scope="col">ID</th>
-    <th scope="col">Title</th>
-    <th scope="col">Language</th>
-    <th scope="col">Author</th>
-    <th scope="col">ISBN</th>
-    <th scope="col">Delete</th>
-  </tr>
+        <p>You can also upload another book:</p>
 
-{% for book in books %}
-  <tr>
-    <td>{{ book.id }}</td>
-    <td>{{ book.title }}</td>
-    <td>{{ book.language if book.language else "..." }}</td>
-    <td>{{ book.author if book.author else "..."  }}</td>
-    <td>{{ book.isbn if book.isbn else "..."  }}</td>
-    <td>
-        <form method="post" action="/delete_book/{{book.id}}">
-            <input type="hidden" name="id" value={{book.id}}> 
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <button type="submit">Delete</button>
-        </form>
-    </td>
+    {% else %}
+        <p>You have not uploaded any books yet. Use the form below!</p><br>
+    {% endif %}
 
-  </tr>
-{% endfor %}
-</table>
-
-<a href="/create_new_pair">Create a pair of pdfs for billingual reading</a></p><br>
-
-<p>You can also upload another book:</p>
-
-{% else %}
-<p>You have not uploaded any books yet. Use the form below!</p><br>
-
-{% endif %}
-
-<form action="/process_pdf" method="post" style="display: inline;" enctype="multipart/form-data">
+    <form action="/process_pdf" method="post" style="display: inline;" enctype="multipart/form-data">
         <div class="form-group col-6">
-          <input type="file" name="pdf-file" class="form-control" id="inputFile" required>
+            <input type="file" name="pdf-file"  id="inputFile" required>
         </div>
         <div class="form-group col-6">
-          <input type="title" class="form-control" id="inputTitle" style="padding:10px" rows="3" cols="40" name="title" placeholder="Title..." required>
+            <input type="title" class="form-control" id="inputTitle" style="padding:10px" rows="3" cols="40" name="title" placeholder="Title..." required>
         </div>
         <div class="form-group col-6">
-        <input type="author" class="form-control" name="author" placeholder="Author (optional)" id="inputAuthor" style="padding:10px" rows="3" cols="40"> </i>
+            <input type="author" class="form-control" name="author" placeholder="Author (optional)" id="inputAuthor" style="padding:10px" rows="3" cols="40"> </i>
         </div>
         <div class="form-group col-6">
-        <input type="language" class="form-control" id="inputLanguage" name="language" placeholder="Language (optional)" style="padding:10px" rows="3" cols="40"> 
+            <input type="language" class="form-control" id="inputLanguage" name="language" placeholder="Language (optional)" style="padding:10px" rows="3" cols="40"> 
         </div>
         <div class="form-group col-6">
-        <input type="isbn" name="isbn" id="inpuIsbn" class="form-control" placeholder="ISBN (optional)" style="padding:10px" rows="3" cols="40">
+            <input type="isbn" name="isbn" id="inpuIsbn" class="form-control" placeholder="ISBN (optional)" style="padding:10px" rows="3" cols="40">
         </div>
 
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
         <div class="form-group col-6">
-        <input type="submit" value="Upload!"><br>
+            <input type="submit" value="Upload!"><br>
         </div>
-</form>
+    </form>
 
-{% if errors %}
-{% for error in errors %}
-<p style="color: red;">{{ error }}</p>
-{% endfor %}
-{% endif %}
+    {% if errors %}
+        {% for error in errors %}
+            <p style="color: red;">{{ error }}</p>
+        {% endfor %}
+    {% endif %}
 
-{% if messages %}
-{% for message in messages %}
-<p style="color: green;">{{ message }}</p>
-{% endfor %}
-{% endif %}
+    {% if messages %}
+        {% for message in messages %}
+            <p style="color: green;">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
 
-{% endblock %}
+    {% endblock %}
 
 {% else %}
-it appears you are not logged on.
+    it appears you are not logged on.
 {% endif %}
-
-
-
-

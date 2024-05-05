@@ -1,163 +1,155 @@
+
 {% extends "reading_layout.html" %}
+
 {% block title %}Main page{% endblock %}
 {% block content %}
 
-<h2>Reading page</h2>
+    <h2>Reading page</h2>
 
-<style>
-  .table th, .table td {
-    font-weight: normal; 
-  }
-</style>
+    <style>
+        .table th, .table td {
+            font-weight: normal; 
+        }
+    </style>
 
-{% if session.username %}
+    {% if session.username %}
 
-<table class="table" border="0">
-  <tr>
-    <th style="text-align: left; width: 10px;" colspan="3">
+        <table class="table" border="0">
+            <tr>
+                <th style="text-align: left; width: 10px;" colspan="3">
+                    <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 3 if counter1 else 0 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2 - 3 if counter2 else 0 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-secondary" value="Previous paragraph">
+                    </form>
 
-      <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
-        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-        <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 3 if counter1 else 0 }}">
-        <input type="text" name="counter2" style="display: none;" value="{{ counter2 - 3 if counter2 else 0 }}">
-        <input type="hidden" name="form_purpose" value="update_counters">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="submit" class="btn btn-secondary" value="Previous paragraph">
-      </form>
+                    <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1 + 3 if counter1 else 3 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2 + 3 if counter2 else 3 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-primary" value="Next paragraph">
+                    </form>
 
-      <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
-        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-        <input type="text" name="counter1" style="display: none;" value="{{ counter1 + 3 if counter1 else 3 }}">
-        <input type="text" name="counter2" style="display: none;" value="{{ counter2 + 3 if counter2 else 3 }}">
-        <input type="hidden" name="form_purpose" value="update_counters">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="submit" class="btn btn-primary" value="Next paragraph">
-      </form>
+                    <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0}}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0}}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+                        <input type="hidden" name="form_purpose" value="save_bookmark">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-info" value="Save bookmark">
+                    </form>
+                </th>
+            </tr>  
+            <tr style="height: 120px; width: 4px;">
+                <th style="text-align: right;">
+                    <form action="/read_pair/{{ pair.id }}" method="POST">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 1 if counter1 else 0 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-secondary" value="-">
+                    </form>
+                </th>
+                <th style="text-align: left;">
+                    <form action="/read_pair/{{ pair.id }}" method="POST">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1+1 if counter1 else 1 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-primary" value="+">
+                    </form>
+                </th>
+                <th style="text-align: left;">
+                    {{ sentences1 if sentences1 else 0 }}<i> {{ counter1 if counter1 else 0}} - {{ counter1+2 if counter1 else 2}}</i>
+                </th>
+            </tr>
+            <tr style="height: 120px;">
+                <th style="text-align: right;">
+                    <form action="/read_pair/{{ pair.id }}" method="POST">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2-1 if counter2 else 0 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-secondary" value="-">
+                    </form>
+                </th>
+                <th style="text-align: left; width: 4px;">
+                    <form action="/read_pair/{{ pair.id }}" method="POST">
+                        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                        <input type="text" name="counter1" style="display: none;" value="{{ counter1  if counter1 else 0 }}">
+                        <input type="text" name="counter2" style="display: none;" value="{{ counter2+1 if counter2 else 1 }}">
+                        <input type="hidden" name="form_purpose" value="update_counters">
+                        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                        <input type="submit" class="btn btn-primary" value="+">
+                    </form>
+                </th>
+                <th style="text-align: left;">
+                    {{ sentences2 if sentences2 else 0 }}<i> {{ counter2 if counter2 else 0}} - {{ counter2+2 if counter2 else 2}}
+                </th>
+            </tr>
 
-      <form action="/read_pair/{{ pair.id }}" method="POST" style="display: inline;">
-        <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0}}">
-        <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0}}">
-        <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
-        <input type="hidden" name="form_purpose" value="save_bookmark">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="submit" class="btn btn-info" value="Save bookmark">
-      </form>
-    </th>
-  </tr>  <tr style="height: 120px; width: 4px;">
-    <th style="text-align: right;">
-        <form action="/read_pair/{{ pair.id }}" method="POST">
-            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-            <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 1 if counter1 else 0 }}">
-            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
-
-            <input type="hidden" name="form_purpose" value="update_counters">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-secondary" value="-">
-
-        </form>
-    </th>
-    <th style="text-align: left;">
-        <form action="/read_pair/{{ pair.id }}" method="POST">
-            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-            <input type="text" name="counter1" style="display: none;" value="{{ counter1+1 if counter1 else 1 }}">
-            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
-
-            <input type="hidden" name="form_purpose" value="update_counters">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-primary" value="+">
-        </form>
-    </th>
-    <th style="text-align: left;">
-            {{ sentences1 if sentences1 else 0 }}<i> {{ counter1 if counter1 else 0}} - {{ counter1+2 if counter1 else 2}}</i>
-    </th>
-
-  <tr style="height: 120px;">
-    <th style="text-align: right;">
-        <form action="/read_pair/{{ pair.id }}" method="POST">
-            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
-            <input type="text" name="counter2" style="display: none;" value="{{ counter2-1 if counter2 else 0 }}">
-
-            <input type="hidden" name="form_purpose" value="update_counters">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-secondary" value="-">
-        </form>
-    </th>
-    <th style="text-align: left; width: 4px;">
-        <form action="/read_pair/{{ pair.id }}" method="POST">
-            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-            <input type="text" name="counter1" style="display: none;" value="{{ counter1  if counter1 else 0 }}">
-            <input type="text" name="counter2" style="display: none;" value="{{ counter2+1 if counter2 else 1 }}">
-
-            <input type="hidden" name="form_purpose" value="update_counters">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-primary" value="+">
-        </form>
-    </th>
-    <th style="text-align: left;">
-    {{ sentences2 if sentences2 else 0 }}<i> {{ counter2 if counter2 else 0}} - {{ counter2+2 if counter2 else 2}}
-    </th>
-  </tr>
-
-</table>
-<br>
-
-{% if bookmarks_of_pair  %}
-        <form action="/delete_all_bookmarks_of_pair/{{ pair.id }}" style="display: inline;" method="POST">
-            <input type="hidden" name="form_purpose" value="delete_all_bookmarks">
-
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-danger" value="Delete all bookmarks">
-        </form>
-
-{% else %}
-No bookmarks yet
-{% endif %}
-<br>
-<br>
-
-{% for bookmark in bookmarks_of_pair %}
-
-<form action="/read_pair/{{ pair.id }}" style="display: inline;" method="POST">
-            <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
-            <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
-            <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
-            <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
-
-            <input type="hidden" name="form_purpose" value="load_bookmark">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input type="submit" class="btn btn-light" value="Load bookmark">
-        </form>
-        <form action="/delete_bookmark/{{ bookmark.id }}" style="display: inline;" method="POST">
-                    <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
-                    <input type="hidden" name="form_purpose" value="delete_bookmark">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <input type="submit" class="btn btn-light" value="Delete bookmark">
-        </form>
-
-
+        </table>
         <br>
-        Last read: {{ bookmark.last_read.strftime("%Y-%m-%d %H:%M") }} <br>
-        Created: {{ bookmark.created_at.strftime("%Y-%m-%d") }} <br>
-        {{ bookmark.counter1 }} and {{ bookmark.counter2}} <br>
-        
-<hr>
-{% endfor %}
 
-{% if errors %}
-{% for error in errors %}
-<p style="color: red;">{{ error }}</p>
-{% endfor %}
-{% endif %}
+        {% if bookmarks_of_pair  %}
+            <form action="/delete_all_bookmarks_of_pair/{{ pair.id }}" style="display: inline;" method="POST">
+                <input type="hidden" name="form_purpose" value="delete_all_bookmarks">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <input type="submit" class="btn btn-danger" value="Delete all bookmarks">
+            </form>
 
-{% if messages %}
-{% for message in messages %}
-<p style="color: green;">{{ message }}</p>
-{% endfor %}
-{% endif %}
+        {% else %}
+            No bookmarks yet
+        {% endif %}
+        <br>
+        <br>
 
-{% else %}
-It appears you are not logged on.
-{% endif %}
+        {% for bookmark in bookmarks_of_pair %}
+            <form action="/read_pair/{{ pair.id }}" style="display: inline;" method="POST">
+                <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+                <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+                <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
+                <input type="hidden" name="form_purpose" value="load_bookmark">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <input type="submit" class="btn btn-light" value="Load bookmark">
+            </form>
+            <form action="/delete_bookmark/{{ bookmark.id }}" style="display: inline;" method="POST">
+                <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
+                <input type="hidden" name="form_purpose" value="delete_bookmark">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <input type="submit" class="btn btn-light" value="Delete bookmark">
+            </form>
+            <br>
+            Last read: {{ bookmark.last_read.strftime("%Y-%m-%d %H:%M") }} <br>
+            Created: {{ bookmark.created_at.strftime("%Y-%m-%d") }} <br>
+            {{ bookmark.counter1 }} and {{ bookmark.counter2}} <br>
+            <hr>
+        {% endfor %}
+
+        {% if errors %}
+            {% for error in errors %}
+                <p style="color: red;">{{ error }}</p>
+            {% endfor %}
+        {% endif %}
+
+        {% if messages %}
+            {% for message in messages %}
+                <p style="color: green;">{{ message }}</p>
+            {% endfor %}
+        {% endif %}
+
+    {% else %}
+        It appears you are not logged on.
+    {% endif %}
 
 {% endblock %}
+

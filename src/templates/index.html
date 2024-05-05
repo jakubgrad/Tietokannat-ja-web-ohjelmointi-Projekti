@@ -1,43 +1,31 @@
-{% if session.username %}
-{% extends "layout.html" %}
-{% else %}
-{% extends "layout_logged_out.html" %}
-{% endif %}
 
+{% if session.username %}
+    {% extends "layout.html" %}
+{% else %}
+    {% extends "layout_logged_out.html" %}
+{% endif %}
 
 {% block heading %}
-{% if session.username %}
-BiReader
-{% else %}
-Welcome to BiReader
-{% endif %}
+    {% if session.username %}
+        BiReader
+    {% else %}
+        Welcome to BiReader
+    {% endif %}
 {% endblock %}
 
 {% block title %}
-{% if session.username %}
-Main
-{% else %}
-Welcome
-{% endif %}
+    {% if session.username %}
+        Main
+    {% else %}
+        Welcome
+    {% endif %}
 {% endblock %}
 
 {% block content %}
-
-{% if session.username %}
-
-<p>Hi {{ session.username }}! To begin using the app, upload at least two pdfs of a book in two different languages and then create a pair out of them to be able to read billingually. The repository contains tested snippets of Harry Poter and the Half-Blood Prince in English and Finnish that you can see. If anything is unclear, feel free to look at the <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/blob/main/README.md">README</a></p>
-
-{% else %}
-
-<p align="center" class="text-justify">
- BiReader is an online application that supports billingual reading in Python using a Postgres database. Billingual reading is a practice of reading the same book in 2 languages. Users can log in and upload pairs of machine-readable pdfs of the same book in two different languages. The backend then processes the pdfs, performs sentence tokenization using spacy, and then uploads them to the server. The users are then able to choose a pair of books that they uploaded and read them side by side. 
-</p>
-
-{% endif %}
-
+    {% if session.username %}
+        <p>Hi {{ session.username }}! To begin using the app, upload at least two PDFs of a book in two different languages and then create a pair out of them to be able to read bilingually. The repository contains tested snippets of Harry Potter and the Half-Blood Prince in English and Finnish that you can see. If anything is unclear, feel free to look at the <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti/blob/main/README.md">README</a>.</p>
+    {% else %}
+        <p align="center" class="text-justify">BiReader is an online application that supports bilingual reading in Python using a Postgres database. Bilingual reading is a practice of reading the same book in 2 languages. Users can log in and upload pairs of machine-readable PDFs of the same book in two different languages. The backend then processes the PDFs, performs sentence tokenization using Spacy, and then uploads them to the server. The users are then able to choose a pair of books that they uploaded and read them side by side.</p>
+    {% endif %}
 {% endblock %}
-
-
-
-
 

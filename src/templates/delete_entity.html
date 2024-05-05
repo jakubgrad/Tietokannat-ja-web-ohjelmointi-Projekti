@@ -1,28 +1,28 @@
 {% extends "layout.html" %}
 {% block title %}Main page{% endblock %}
 {% block content %}
-{% if session.username %}
+    {% if session.username %}
 
-<h2>Delete pair {{ name }}</h2>
-<p>{{ message }}</p>
+        <h2>Delete pair {{ name }}</h2>
+        <p>{{ message }}</p>
 
-<form action="/delete_{{ name }}/{{ entity.id }}" method="post">
-        The pair: {{ name }} <b>{{ entity.name }}</b> of id {{ entity.id }}. Delete the pair?<br>
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="submit" value="Delete {{ name }}">
-</form>
+        <form action="/delete_{{ name }}/{{ entity.id }}" method="post">
+            The pair: {{ name }} <b>{{ entity.name }}</b> of id {{ entity.id }}. Delete the pair?<br>
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="submit" value="Delete {{ name }}">
+        </form>
 
-{% else %}
-<title>BiReader</title>
-<h1>BiReader</h1>
-<a href="/login">Login</a> &nbsp;&nbsp;&nbsp;    
-<a href="/register">Register</a>
+    {% else %}
 
-<hr>
-It appears that you have not logged on. Login or register to use the app!
-<hr>
- <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
+        <title>BiReader</title>
+        <h1>BiReader</h1>
+        <a href="/login">Login</a> &nbsp;&nbsp;&nbsp;    
+        <a href="/register">Register</a>
 
-{% endif %}
+        <hr>
+        It appears that you have not logged on. Login or register to use the app!
+        <hr>
+        <a href="https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti">Github</a>
 
+    {% endif %}
 {% endblock %}
