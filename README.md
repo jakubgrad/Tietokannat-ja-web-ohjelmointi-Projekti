@@ -7,8 +7,6 @@ The goal of the project is to create **an online application that supports billi
 </p>
 
 
-The assumption is that the uploaded books were purchased and used by users only for their own reading. Because of strict rules against intellectual theft, administrators need be able to delete books and users if they violate the Terms of Service or an intellectual right of authors.
-
 Technical details: the project has many dependencies, including `Python Flask`, `Flask SqlAlchemy`, `Psycopg2` and so on. The full list is in the `requirements.txt` document and the installation is for them is outlined below. The project use a virtual environment.
 <br>
 Tested using [https://vdi.helsinki.fi/](https://vdi.helsinki.fi/]), university's online virtual machine running on Cubbli.
