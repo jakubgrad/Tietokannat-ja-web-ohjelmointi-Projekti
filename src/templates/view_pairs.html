@@ -50,6 +50,7 @@
     <td scope="row">
         <form method="post" action="/delete_pair/{{pair.id}}">
             <input type="hidden" name="id" value={{pair.id}}> 
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <button type="submit">Delete</button>
         </form>
     </td>
