@@ -2,6 +2,45 @@ from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from db import db
 
+def fetch_quick_bookmarks(user_id):
+    bookmarks = []
+    bookmakrs.append(fetch_last_read_bookmark())
+    try:
+        db.session.commit()
+        sql = """SELECT pair_id,counter1,counter2,name 
+                 FROM bookmarks 
+                 INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
+                 WHERE pair_id IN 
+                    ( SELECT id FROM pairs WHERE user_id=:user_id ) 
+                 ORDER BY last_read DESC LIMIT 3;"""
+
+
+        result = db.session.execute(text(sql), {"user_id":user_id})
+        bookmarks.append(result.fetchone())
+        return bookmarks
+    except SQLAlchemyError as e:
+        print(f"Error for selecting bookmarks: {e}")
+        return False
+    return True
+
+def fetch_last_read_bookmark(user_id):
+    try:
+        db.session.commit()
+        sql = """SELECT pair_id,counter1,counter2,name 
+                 FROM bookmarks 
+                 INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
+                 WHERE pair_id IN 
+                    ( SELECT id FROM pairs WHERE user_id=:user_id ) 
+                 ORDER BY last_read DESC LIMIT 1;"""
+
+        result = db.session.execute(text(sql), {"user_id":user_id})
+        return result.fetchone()
+    except SQLAlchemyError as e:
+        print(f"Error for selecting bookmarks: {e}")
+        return False
+    return True
+
+
 def save_bookmark(pair_id,counter1, counter2):
     try:
         db.session.commit()
@@ -53,12 +92,21 @@ def fetch_bookmarks_by_pair_id(pair_id):
 def fetch_bookmark_by_id(bookmark_id):
     try:
         print(bookmark_id, type(bookmark_id))
+
+        sql = """UPDATE bookmarks
+                 SET last_read = CURRENT_TIMESTAMP
+                 WHERE id=:bookmark_id;"""
+        db.session.execute(text(sql), {"bookmark_id":bookmark_id})
+        db.session.commit()
+
         sql = """SELECT id,pair_id,counter1,counter2,created_at,last_read
                  FROM bookmarks WHERE id=:bookmark_id"""
         result = db.session.execute(text(sql), {"bookmark_id":bookmark_id})
         db.session.commit()
         bookmark = result.fetchone()
         print(f"fetched bookmark:{bookmark}")
+
+
         return bookmark
     except SQLAlchemyError as e:
         print(f"Error for fetch bookmark by id: {e}")
