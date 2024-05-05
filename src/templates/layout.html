@@ -32,14 +32,14 @@
                 {% block content %}{% endblock %}
             </div>
             <div class="col-4">
-                {% if bookmarks %}
+                {% if quick_bookmarks %}
                     <h2>Last read</h2>
                 {% else %}
                     <h2>Continue reading...</h2>
                 {% endif %}
                 <p align="center" class="text-justify">
-                {% if bookmarks %}
-                    {% for quick_bookmark in bookmarks %}
+                {% if quick_bookmarks %}
+                    {% for quick_bookmark in quick_bookmarks %}
                         <p>
                             <form action="/read_pair/{{ quick_bookmark[0] }}" style="display: inline;" method="POST">
                                 <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
