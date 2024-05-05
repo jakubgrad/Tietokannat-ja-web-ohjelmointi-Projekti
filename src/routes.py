@@ -5,6 +5,13 @@ import pairs
 import bookmarks
 from app import app
 
+def prevent_csrf():
+    if users.user_session() != request.form["csrf_token"]:
+        errors.append("CSRF attack detected")
+
+def fetch_quick_bookmarks():
+    return bookmarks.fetch_quick_bookmarks(users.user_id())
+
 @app.route("/")
 def index():
     books_of_user = books.fetch_all_for_user_id(users.user_id())
@@ -12,12 +19,13 @@ def index():
         dimmed_pair_options = False
     else:
         dimmed_pair_options = True
-    return render_template("index.html",dimmed_pair_options=dimmed_pair_options)
+    bookmarks = fetch_quick_bookmarks()
+    print(f"quick_bookmarks: {bookmarks}")
+    return render_template("index.html",dimmed_pair_options=dimmed_pair_options, bookmarks=bookmarks)
 
 @app.route("/new")
 def new():
     return render_template("new.html")
-
 
 @app.route("/create_new_pair",methods=["GET","POST"])
 def create_new_pair():
@@ -28,8 +36,7 @@ def create_new_pair():
                 books = books.fetch_all_for_user_id(users.user_id()))
         return redirect("/")
     if request.method == "POST":
-        if users.user_session() != request.form["csrf_token"]:
-            errors.append("CSRF attack detected")
+        prevent_csrf()
         name = request.form["name"]
         book1_id = request.form["book1_id"]
         book2_id = request.form["book2_id"]
@@ -113,7 +120,7 @@ def view_uploads():
     return render_template("view_uploads.html",
         books = books.fetch_all_for_user_id(users.user_id()))
 
-@app.route("/delete_book/<int:id>", methods=['GET', 'POST'])
+@app.route("/delete_book/<int:book_id>", methods=['GET', 'POST'])
 def delete_book(book_id):
     errors = []
     if request.method == 'GET':
@@ -129,7 +136,7 @@ def delete_book(book_id):
     return render_template("view_pairs.html",
         pairs = pairs.fetch_all_for_user_id(users.user_id()),  errors=errors)
 
-@app.route("/delete_pair/<int:id>", methods=['GET', 'POST'])
+@app.route("/delete_pair/<int:pair_id>", methods=['GET', 'POST'])
 def delete_pair(pair_id):
     messages = []
     errors = []
@@ -137,7 +144,7 @@ def delete_pair(pair_id):
         return redirect(url_for("view_pairs"))
     if request.method == 'POST':
         bookmarks.delete_all_bookmarks_of_pair_by_pair_id(pair_id)
-        if pairs.delete_pair_by_id(id):
+        if pairs.delete_pair_by_id(pair_id):
             messages.append(f"Successfully deleted pair of id {pair_id}.")
             return render_template("view_pairs.html",
                 pairs = pairs.fetch_all_for_user_id(users.user_id()),  messages=messages)
@@ -145,7 +152,7 @@ def delete_pair(pair_id):
     return render_template("view_pairs.html",
         pairs = pairs.fetch_all_for_user_id(users.user_id()), errors=errors)
 
-@app.route("/delete_bookmark/<int:id>", methods=['GET', 'POST'])
+@app.route("/delete_bookmark/<int:pair_id>", methods=['GET', 'POST'])
 def delete_bookmark(bookmark_id):
     errors = []
     bookmark = bookmarks.fetch_bookmark_by_id(bookmark_id)
@@ -159,7 +166,7 @@ def delete_bookmark(bookmark_id):
     errors.append(f"Failed to delete bookmark {id}")
     return redirect(url_for("read_pair", pair_id=pair_id, errors=errors))
 
-@app.route("/delete_all_bookmarks_of_pair/<int:id>", methods=['GET', 'POST'])
+@app.route("/delete_all_bookmarks_of_pair/<int:pair_id>", methods=['GET', 'POST'])
 def delete_all_bookmarks_of_pair(pair_id):
     errors = []
     if request.method == 'GET':
@@ -174,8 +181,6 @@ def delete_all_bookmarks_of_pair(pair_id):
 def process_pdf():
     errors = []
     if request.method == 'POST':
-        if users.user_session() != request.form["csrf_token"]:
-            errors.append("CSRF attack detected")
         if 'pdf-file' not in request.files:
             errors.append("No file attached")
         file = request.files['pdf-file']
@@ -219,11 +224,12 @@ def read_pair(pair_id):
             counter2=counter2, bookmarks_of_pair=bookmarks_of_pair)
 
     if request.method == "POST":
+        prevent_csrf()
         if not pairs.check_id_validity(pair_id,users.user_id()):
             errors.append("Pair not available")
             return redirect(url_for("view_pairs", errors=errors))
 
-        counter = int(request.form["counter"])
+        counter = int(request.form["counter"]) 
         counter1 = int(request.form["counter1"])
         counter2 = int(request.form["counter2"])
 
