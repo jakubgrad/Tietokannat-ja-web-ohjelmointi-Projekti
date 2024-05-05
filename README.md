@@ -7,24 +7,21 @@ The goal of the project is to create **an online application that supports billi
 </p>
 
 
-The assumption is that the uploaded books were purchased and used by users only for their own reading. Because of strict rules against intellectual theft, administrators need be able to delete books and users if they violate the Terms of Service or an intellectual right of authors.
-
 Technical details: the project has many dependencies, including `Python Flask`, `Flask SqlAlchemy`, `Psycopg2` and so on. The full list is in the `requirements.txt` document and the installation is for them is outlined below. The project use a virtual environment.
 <br>
 Tested using [https://vdi.helsinki.fi/](https://vdi.helsinki.fi/]), university's online virtual machine running on Cubbli.
 <br>
 
-The database would should eventually have the following tables:
+The database has the following tables:
 ```
--a table with users (username as email and password), possibly the same or a separate table with administrators 
--a table for uploaded pdfs that contains names, author, cover image, language, details and ids of books
+-a table with users (username and password)
+-a table for uploaded pdfs that contains names, author, language, ISBN
 -a table for pairs of pdfs to read
--and a table that keeps track of settings and progress for individual users reading a particular pair of books. So for instance which sentence was being read from one book of the pair together with which sentence from the other, by whom, and how many sentences at a time.
--a table for named bookmarks, purely out of convenience for the reader
--a table for saved words. I also want to include a search box for translation using trans, a bash script that very quickly translates sentences and individual words that I have hotkeyed on my computer
+-a table for named bookmarks for the convenience of the reader
 ```
 
-Manual installation instructions created basing on university's Cubbli OS (in production is a single script that could handle installation):<br>
+# Installation
+Created for University of Helsinki's Cubbli OS:<br>
 Install postgresql if you haven't already. You can follow the instructions [here](https://github.com/hy-tsoha/local-pg) or do the following at your university computer:
 ```
 cd ~
@@ -34,7 +31,7 @@ bash local-pg/pg-install.sh install .bashrc
 ```
 To start postgresql database, run:
 ```
-source .bashrc # or reload the terminal or log out and log in
+source .bashrc
 start-pg.sh  
 ```
 The database is necessary for the application to work, but once you're finished using the application, remember to close it with `Ctrl + c`. Now that your database is running, in a separate terminal run:
@@ -42,9 +39,9 @@ The database is necessary for the application to work, but once you're finished 
 psql -h ~/pgsql/sock/ 
 ```
 If your prompt has changed to `username=#`, that means that psql works correctly. You can exit it by pressing `Ctrl + d`.
-Now let's download this repository. The location is actually important here, since if we install in a symlinked directory like Desktop, Downloads, or Documents, we won't be able to start a Python virtual environment later on. For me, installing in my /home/ad/lxhome/g/<username>/Linux directory works the best. So you can simply go over to: 
+Now let's download this repository. The location is actually important here, since if we install in a symlinked directory like Desktop, Downloads, or Documents, we might not be able to start a Python virtual environment later on. For me, installing in my user's home directory works the best. So you can simply run: 
 ```
-cd /home/ad/lxhome/g/<your_username>/Linux
+cd ~
 git clone https://github.com/jakubgrad/Tietokannat-ja-web-ohjelmointi-Projekti.git
 ```
 Now you want to populate the database with tables and some sample data:
@@ -80,7 +77,7 @@ Press CTRL+C to quit
 And you can now head over to localhost:5000 in your browser and see the program in action.<br/>
 Because of the nature of pdf parsing, the application will reject a lot of pdfs or else, format them in strange ways. Because of it, the repository contains two pdfs that are ready to use and tested, residing in the `/examples` directory. So when using the application for the first time, I recommend to:
 - register
-- click on `Upload a pdf`
+- click on `Books`
 - In the file explorer window click on home, find the `Tietokannat-ja-web-ohjelmointi-Projekti`, go to examples and *voila*, there is J.K Rowling's Half Blood Prince in English and Finnish. Upload the files one after the other. Then, click on `Create a pair of pdfs for billingual reading`, name the pair, select ids 1 and 2 and `Create a new pair!`. You can read right away. `Next paragraph` and `Previous paragraph` move both of the books back and forth 3 sentences by default. `+` and `-` move either of the books by one sentence, so that whenver the two versions have different number of sentences, you can keep reading.
 
 # Useful commands
