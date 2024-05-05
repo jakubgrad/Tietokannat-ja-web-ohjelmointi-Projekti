@@ -77,7 +77,7 @@ def delete_pair_by_id(pair_id):
         print(f"Error: {e}")
         return False
 
-    if fetch_pair_by_id(id):
+    if fetch_pair_by_id(pair_id):
         return False
     return True
 
