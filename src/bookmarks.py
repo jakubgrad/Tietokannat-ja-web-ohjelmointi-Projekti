@@ -9,24 +9,11 @@ def fetch_quick_bookmarks(user_id):
                  FROM bookmarks INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
                  WHERE pair_id IN ( 
                      SELECT id FROM pairs WHERE user_id=2) 
-                 ) 
+                 ) AS subquery_alias
               ORDER BY last_read DESC;"""
 
     result = db.session.execute(text(sql), {"user_id":user_id})
     return result.fetchall()
-
-def fetch_last_read_bookmark(user_id):
-    db.session.commit()
-    sql = """SELECT pair_id,counter1,counter2,name
-             FROM bookmarks 
-             INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
-             WHERE pair_id IN 
-                ( SELECT id FROM pairs WHERE user_id=:user_id ) 
-             ORDER BY last_read DESC LIMIT 1;"""
-
-    result = db.session.execute(text(sql), {"user_id":user_id})
-    return result.fetchone()
-
 
 def save_bookmark(pair_id,counter1, counter2):
     db.session.commit()
