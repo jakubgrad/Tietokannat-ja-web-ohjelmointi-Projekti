@@ -74,6 +74,6 @@ def delete_book_by_id(book_id):
         print(f"Error: {e}")
         return False
 
-    if fetch_book_by_id(id):
+    if fetch_book_by_id(book_id):
         return False
     return True
