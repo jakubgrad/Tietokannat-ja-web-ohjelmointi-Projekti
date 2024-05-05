@@ -5,7 +5,7 @@ from db import db
 def fetch_quick_bookmarks(user_id):
     try:
         db.session.commit()
-        sql = """SELECT * FROM ( 
+        sql = """SELECT * FROM (
                      SELECT DISTINCT ON (pair_id) pair_id,bookmarks.id,counter1,counter2,last_read,name 
                      FROM bookmarks INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
                      WHERE pair_id IN ( 
@@ -23,7 +23,7 @@ def fetch_quick_bookmarks(user_id):
 def fetch_last_read_bookmark(user_id):
     try:
         db.session.commit()
-        sql = """SELECT pair_id,counter1,counter2,name 
+        sql = """SELECT pair_id,counter1,counter2,name
                  FROM bookmarks 
                  INNER JOIN pairs ON bookmarks.pair_id=pairs.id 
                  WHERE pair_id IN 
@@ -74,7 +74,7 @@ def delete_all_bookmarks_of_pair_by_pair_id(pair_id):
 def fetch_bookmarks_by_pair_id(pair_id):
     try:
         print(pair_id, type(pair_id))
-        sql = """SELECT id,pair_id,counter1,counter2,created_at,last_read 
+        sql = """SELECT id,pair_id,counter1,counter2,created_at,last_read
                  FROM bookmarks WHERE pair_id=:pair_id"""
         result = db.session.execute(text(sql), {"pair_id":pair_id})
         db.session.commit()
