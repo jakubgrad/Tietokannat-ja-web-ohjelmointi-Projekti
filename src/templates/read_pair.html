@@ -21,6 +21,7 @@
         <input type="text" name="counter1" style="display: none;" value="{{ counter1 - 3 if counter1 else 0 }}">
         <input type="text" name="counter2" style="display: none;" value="{{ counter2 - 3 if counter2 else 0 }}">
         <input type="hidden" name="form_purpose" value="update_counters">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="submit" class="btn btn-secondary" value="Previous paragraph">
       </form>
 
@@ -29,6 +30,7 @@
         <input type="text" name="counter1" style="display: none;" value="{{ counter1 + 3 if counter1 else 3 }}">
         <input type="text" name="counter2" style="display: none;" value="{{ counter2 + 3 if counter2 else 3 }}">
         <input type="hidden" name="form_purpose" value="update_counters">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="submit" class="btn btn-primary" value="Next paragraph">
       </form>
 
@@ -37,7 +39,8 @@
         <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0}}">
         <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
         <input type="hidden" name="form_purpose" value="save_bookmark">
-        <input type="submit" value="Save bookmark">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="submit" class="btn btn-info" value="Save bookmark">
       </form>
     </th>
   </tr>  <tr style="height: 120px; width: 4px;">
@@ -48,7 +51,9 @@
             <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
 
             <input type="hidden" name="form_purpose" value="update_counters">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="submit" class="btn btn-secondary" value="-">
+
         </form>
     </th>
     <th style="text-align: left;">
@@ -58,6 +63,7 @@
             <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
 
             <input type="hidden" name="form_purpose" value="update_counters">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="submit" class="btn btn-primary" value="+">
         </form>
     </th>
@@ -73,6 +79,7 @@
             <input type="text" name="counter2" style="display: none;" value="{{ counter2-1 if counter2 else 0 }}">
 
             <input type="hidden" name="form_purpose" value="update_counters">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="submit" class="btn btn-secondary" value="-">
         </form>
     </th>
@@ -83,6 +90,7 @@
             <input type="text" name="counter2" style="display: none;" value="{{ counter2+1 if counter2 else 1 }}">
 
             <input type="hidden" name="form_purpose" value="update_counters">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="submit" class="btn btn-primary" value="+">
         </form>
     </th>
@@ -97,7 +105,9 @@
 {% if bookmarks_of_pair  %}
         <form action="/delete_all_bookmarks_of_pair/{{ pair.id }}" style="display: inline;" method="POST">
             <input type="hidden" name="form_purpose" value="delete_all_bookmarks">
-            <input type="submit"  value="Delete all bookmarks">
+
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="submit" class="btn btn-danger" value="Delete all bookmarks">
         </form>
 
 {% else %}
@@ -115,20 +125,21 @@ No bookmarks yet
             <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
 
             <input type="hidden" name="form_purpose" value="load_bookmark">
-            <input type="submit"  value="Load bookmark">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="submit" class="btn btn-light" value="Load bookmark">
         </form>
         <form action="/delete_bookmark/{{ bookmark.id }}" style="display: inline;" method="POST">
                     <input type="number" style="display: none;" name="bookmark_id" value={{bookmark.id}}>
                     <input type="hidden" name="form_purpose" value="delete_bookmark">
-                    <input type="submit" value="Delete bookmark">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <input type="submit" class="btn btn-light" value="Delete bookmark">
         </form>
 
 
         <br>
-        Last read: {{ bookmark.last_read }} <br>
-        Created: {{ bookmark.created_at.strftime("%Y-%m-%d %H:%M:%S") }} <br>
-        Book 1 progression: {{ bookmark.counter1 }} <br>
-        Book 2 progression: {{ bookmark.counter2}} <br>
+        Last read: {{ bookmark.last_read.strftime("%Y-%m-%d %H:%M") }} <br>
+        Created: {{ bookmark.created_at.strftime("%Y-%m-%d") }} <br>
+        {{ bookmark.counter1 }} and {{ bookmark.counter2}} <br>
         
 <hr>
 {% endfor %}
