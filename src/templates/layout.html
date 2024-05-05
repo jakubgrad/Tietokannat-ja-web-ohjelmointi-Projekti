@@ -28,9 +28,32 @@
                 {% block content %}{% endblock %}
     </div>
     <div class="col-4">
-      <h2>Quick bookmarks</h2>
+
+        {% if bookmarks %} 
+      <h2>Last read</h2>
+        {% else %} 
+      <h2>Continue reading...</h2>
+        {% endif %} 
         <p align="center" class="text-justify">
-        Research has shown that reading books in multiple languages can enhance cognitive abilities, including problem-solving skills, creativity, and memory retention. <br><br>
+        {% if bookmarks %} 
+
+        {% for bookmark in bookmarks %}
+        <p>
+        <form action="/read_pair/{{ bookmark[0] }}" style="display: inline;" method="POST">
+                    <input type="text" name="counter" style="display: none;" value="{{ counter if counter else 0 }}">
+                    <input type="text" name="counter1" style="display: none;" value="{{ counter1 if counter1 else 0 }}">
+                    <input type="text" name="counter2" style="display: none;" value="{{ counter2 if counter2 else 0 }}">
+                    <input type="number" style="display: none;" name="bookmark_id" value={{bookmark[1]}}>
+
+                    <input type="hidden" name="form_purpose" value="load_bookmark">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <button type="submit" style="border: none; background: none; color: blue; cursor: pointer;">{{ bookmark[5] }}</button>
+                
+        </p>
+        {% endfor %}
+        {% else %} 
+        No bookmarks yet
+        {% endif %} 
         </p>
     </div>
   </div>
